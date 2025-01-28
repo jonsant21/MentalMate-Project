@@ -1,0 +1,177 @@
+/* Home.css */
+.home-container {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    padding-bottom: 50px; /* Ensures space at the very bottom of the page */
+  }
+  
+  .hero-section {
+    text-align: center;
+    background: linear-gradient(to right, #6a11cb, #2575fc);
+    color: white;
+    padding: 50px 20px;
+    border-radius: 10px;
+    margin: 0 auto;
+  }
+  
+  .hero-section h1 {
+    font-size: 3rem;
+    margin-bottom: 10px;
+  }
+  
+  .hero-section p {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+  
+  .cta-button {
+    background-color: #ff7f50;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  }
+  
+  .cta-button:hover {
+    background-color: #ff6347;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Testimonials Section */
+.testimonials-section {
+    text-align: center;
+    margin: 50px auto;
+    padding: 30px;
+  }
+  
+  .testimonials-section h2 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  .testimonials-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .testimonial {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    text-align: left;
+  }
+  
+  .testimonial p {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    color: #555;
+  }
+  
+  .testimonial span {
+    font-weight: bold;
+    color: #333;
+  }
+  
+  /* Feature Highlights Section */
+.features-section {
+    text-align: center;
+    padding: 50px 20px;
+    background-color: #f4f4f4;
+    margin-bottom: 50px; /* Adds space below the section */
+  }
+  
+  .features-section h2 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 30px;
+  }
+  
+  .features-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .feature-card {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    width: 300px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+  }
+  
+  .feature-icon {
+    font-size: 3rem;
+    color: #6a11cb;
+    margin-bottom: 15px;
+  }
+  
+  .feature-card h3 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .feature-card p {
+    font-size: 1rem;
+    color: #555;
+  }
+  
+  .benefits-section {
+    text-align: center;
+    padding: 50px 20px;
+    background-color: #f8f9fa;
+  }
+  
+  .benefits-section h2 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  .benefits-section p {
+    font-size: 1.2rem;
+    color: #555;
+    margin-bottom: 30px;
+  }
+  
+  .benefits-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: center; /* Align items horizontally */
+    gap: 30px;
+    flex-wrap: wrap; /* Ensure items stack properly on smaller screens */
+  }
+  
+  .benefits-list li {
+    font-size: 1.1rem;
+    color: #444;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .benefits-list span {
+    font-size: 1.5rem;
+    color: #6a11cb; /* Icon color */
+  }
+  

@@ -1,0 +1,31 @@
+.footer {
+  background-color: #4a90e2;
+  color: white;
+  text-align: center;
+  padding: 0.5rem 0; /* Reduce padding for a slimmer footer */
+  width: 100%;
+}
+
+.footer-links {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: 1rem; /* Adjust gap for smaller spacing */
+  margin: 0.3rem 0 0; /* Align links closer to text */
+  padding: 0;
+}
+
+.footer-links a {
+  text-decoration: none;
+  color: white;
+  font-size: 0.8rem; /* Slightly smaller font for compact design */
+}
+
+.footer-links a:hover {
+  text-decoration: underline;
+}
+
+.footer p {
+  margin: 0; /* Remove extra margin to keep it tight */
+  font-size: 0.8rem; /* Match font size with links */
+}
