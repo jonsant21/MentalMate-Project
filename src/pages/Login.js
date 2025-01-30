@@ -14,10 +14,32 @@ function Login() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('Log-In Form Data:', formData);
     // This is where backend integration will go in the future
+    try{
+      const response = await fetch('http://localhost:8081/user/log-in', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+  
+      if(response.ok){
+        const data = await response.json();
+        console.log(data.message);
+      }
+      else{
+        const errorData = await response.json();
+        console.log(errorData.message)
+      }
+    }
+  
+    catch(error){
+      console.log(error);
+    }
   };
 
   return (
