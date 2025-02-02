@@ -19,7 +19,7 @@ function Login() {
     console.log('Log-In Form Data:', formData);
     // This is where backend integration will go in the future
     try{
-      const response = await fetch('http://localhost:8081/user/log-in', {
+      const response = await fetch('http://localhost:8081/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

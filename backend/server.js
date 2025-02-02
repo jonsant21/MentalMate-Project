@@ -11,6 +11,8 @@ const session = require("./middleware/session");
 //Importing Routes:
 const login = require('./routes/Login');
 const signup = require('./routes/Signup');
+const validateLogin = require('./routes/ValidateLogin');
+const logout = require('./routes/Logout');
 
 //Initializing Express:
 const app = express();
@@ -23,8 +25,10 @@ app.use(session);
 // Mounting routes to app:
 // Urls that start with https://localhost:8081/login(/)
 // will be directed to all the routes on Users.js (login) and etc.
-app.use('/user', login);
+app.use('/login', login);
 app.use('/sign-up', signup);
+app.use('/validate-login', validateLogin);
+app.use('/logout', logout);
 
 
 app.get("/", (req, res) => {
