@@ -10,7 +10,7 @@ const router = express.Router();
 //Routes/Endpoints:
 
 
-//save-journal: saves the journal written by user:
+//save-journal: saves the journal written by user: seems to work just fine
 router.post('/save-journal', (req, res) => {
 
     //Initializing the current date:
@@ -21,6 +21,12 @@ router.post('/save-journal', (req, res) => {
     const year = date.getFullYear();
     const currentDate = `${year}-${month}-${day}`;
 
+    // Get the current time as a string: 24 hour time
+    const currentTime = date.toLocaleTimeString('en-US', { hour12: false });
+
+    //Combining them together:
+    const currentDateTime = `${currentDate} ${currentTime}`;
+
 
     // Retrieve journal info:
     const {title, content} = req.body;
@@ -28,7 +34,7 @@ router.post('/save-journal', (req, res) => {
     //SQL query:
     let query = 'INSERT INTO JOURNAL (TITLE, WRITE_DATE, CONTENT, AUTHOR) VALUES (?, ?, ?, ?)';
 
-    connection.query(query, [title, currentDate, content, req.session.id], (err, results) =>{
+    connection.query(query, [title, currentDateTime, content, req.session.userId], (err, results) =>{
         if(err){
             return res.status(500).json({ message: 'Database error' });
         }
@@ -37,8 +43,26 @@ router.post('/save-journal', (req, res) => {
     });
 });
 
+
+
+
+
+
 //Retrieve Journal:
 //TODO: query the database to collect all journal entries that the user has written
+router.get('/', (req, res) => {
+
+let query = 'SELECT * FROM JOURNAL WHERE AUTHOR = ?'
+
+        connection.query(query, [req.session.userId], (err, results) =>{
+            if(err){
+             return res.status(500).json({ message: 'Database error' });
+            }
+
+            return res.json(results);
+        });
+    
+});
 
 
 //Delete journal:
