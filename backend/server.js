@@ -13,6 +13,7 @@ const login = require('./routes/Login');
 const signup = require('./routes/Signup');
 const validateLogin = require('./routes/ValidateLogin');
 const logout = require('./routes/Logout');
+const journal = require("./routes/Journal");
 
 //Initializing Express:
 const app = express();
@@ -29,7 +30,7 @@ app.use('/login', login);
 app.use('/sign-up', signup);
 app.use('/validate-login', validateLogin);
 app.use('/logout', logout);
-
+app.use('/journal', journal);
 
 app.get("/", (req, res) => {
     return res.json({message: "Hello from the backend"})

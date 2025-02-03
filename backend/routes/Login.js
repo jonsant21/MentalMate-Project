@@ -28,8 +28,8 @@ router.post('/', (req, res) => {
         req.session.email = email;
         req.session.password = password;
         req.session.username = results[0].USERNAME;
-        req.session.id = results[0].ID;
-        return res.json({message: `Info saved successfully in the backend. Hello ${req.session.username}, with ID number ${req.session.ID}`});
+        req.session.userId = results[0].ID;
+        return res.json({message: `Info saved successfully in the backend. Hello ${req.session.username}, with ID number ${req.session.userId}`});
     });
 });
 
