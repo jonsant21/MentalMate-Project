@@ -52,3 +52,35 @@
     background-color: #357abd;
   }
   
+  .create-account-link {
+    display: block;              /* Ensure it takes up full width */
+    text-align: center;          /* Centers the text inside the block */
+    margin-top: 10px;            /* Adds space above the link */
+    color: blue;                 /* Makes the text blue */
+    cursor: pointer;            /* Changes the cursor to pointer when hovering */
+    text-decoration: underline;  /* Underlines the text */
+  }
+  
+  .create-account-link:hover {
+    color: darkblue;             /* Darken the color on hover */
+  }
+
+
+
+  .home-dashboard-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .home-dashboard-btn:hover {
+    background-color: #0056b3;
+  }
+  
+  
