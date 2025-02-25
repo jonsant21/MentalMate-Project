@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import '../styles/Home.css';
 import { FaUserCheck, FaBrain, FaChartLine } from 'react-icons/fa'; // Import icons
 
@@ -9,7 +10,9 @@ function Home() {
       <section className="hero-section">
         <h1>Welcome to MentalMate</h1>
         <p>Your personalized mental health companion. Explore features like mood tracking, personalized suggestions, and mindfulness resources.</p>
-        <button className="cta-button">Get Started</button>
+        <Link to="/login">
+          <button className="cta-button">Get Started</button>
+        </Link>
       </section>
 
       {/* Testimonials Section */}
@@ -53,22 +56,22 @@ function Home() {
         </div>
       </section>
 
-    {/* Feature Benefits Section */}
-    <section className="benefits-section">
-      <h2>Why Choose MentalMate?</h2>
-      <p>We're here to support you with tailored solutions and tools to enhance your mental health journey.</p>
-      <ul className="benefits-list">
-        <li>
-          <span>🌟</span> Available 24/7 to support your mental health journey.
-        </li>
-        <li>
-          <span>🔍</span> Tailored insights to help you grow and reflect.
-        </li>
-        <li>
-          <span>🧘‍♂️</span> Scientifically-backed mindfulness practices.
-        </li>
-      </ul>
-    </section>
+      {/* Feature Benefits Section */}
+      <section className="benefits-section">
+        <h2>Why Choose MentalMate?</h2>
+        <p>We're here to support you with tailored solutions and tools to enhance your mental health journey.</p>
+        <ul className="benefits-list">
+          <li>
+            <span>🌟</span> Available 24/7 to support your mental health journey.
+          </li>
+          <li>
+            <span>🔍</span> Tailored insights to help you grow and reflect.
+          </li>
+          <li>
+            <span>🧘‍♂️</span> Scientifically-backed mindfulness practices.
+          </li>
+        </ul>
+      </section>
 
     </div>
   );
