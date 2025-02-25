@@ -11,16 +11,13 @@ function Navbar() {
           <Link to="/">Home</Link>
         </li>
         <li>
-          <Link to="/chat">Chat</Link>
-        </li>
-        <li>
           <Link to="/about">About</Link>
         </li>
         <li>
-        <Link to="/signup">Sign Up</Link>
+          <Link to="/signup">Sign Up</Link>
         </li>
         <li>
-        <Link to="/login">Log In</Link>
+          <Link to="/login">Log In</Link>
         </li>
       </ul>
     </nav>

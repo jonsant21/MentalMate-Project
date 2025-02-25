@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Importing useNavigate for navigation
 import '../styles/Login.css'; // Import the CSS for styling
 
 function Login() {
@@ -6,6 +7,8 @@ function Login() {
     email: '',
     password: '',
   });
+
+  const navigate = useNavigate(); // For navigation
 
   const handleChange = (e) => {
     setFormData({
@@ -18,7 +21,7 @@ function Login() {
     e.preventDefault();
     console.log('Log-In Form Data:', formData);
     // This is where backend integration will go in the future
-    try{
+    try {
       const response = await fetch('http://localhost:8081/user/log-in', {
         method: 'POST',
         headers: {
@@ -26,53 +29,69 @@ function Login() {
         },
         body: JSON.stringify(formData),
       });
-  
-      if(response.ok){
+
+      if (response.ok) {
         const data = await response.json();
         console.log(data.message);
-      }
-      else{
+      } else {
         const errorData = await response.json();
-        console.log(errorData.message)
+        console.log(errorData.message);
       }
-    }
-  
-    catch(error){
+    } catch (error) {
       console.log(error);
     }
   };
 
-  return (
-  <div className="login-container">
-    <h1>Log In</h1>
-    <form className="login-form" onSubmit={handleSubmit}>
-      <div className="form-group">
-        <label htmlFor="email">Email</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
-      </div>
-      <div className="form-group">
-        <label htmlFor="password">Password</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
-      </div>
-      <button type="submit">Log In</button>
-    </form>
-  </div>
-);
+  const handleCreateAccountClick = () => {
+    navigate('/signup'); // Navigates to the sign-up page from the Create Account button
+  };
 
+  const handleHomeDashboardClick = () => {
+    navigate('/home-dashboard'); // Navigates to HomeDashboard page
+  };
+
+  return (
+    <div className="login-container">
+      <h1>Log In</h1>
+      <form className="login-form" onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label htmlFor="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <button type="submit">Log In</button>
+      </form>
+
+      <p className="create-account-link" onClick={handleCreateAccountClick}>
+        Create Account? 
+      </p>
+
+      {/* Placeholder Button */}
+      <button
+        className="home-dashboard-btn"
+        onClick={handleHomeDashboardClick}
+      >
+        Go to HomeDashboard
+      </button>
+    </div>
+  );
 }
 
 export default Login;
