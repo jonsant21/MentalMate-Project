@@ -1,0 +1,27 @@
+/* NavbarHomeDashboard.css */
+.navbar-home-dashboard {
+    background-color: #007bff;
+    padding: 10px 20px;
+    text-align: center;
+  }
+  
+  .navbar-home-dashboard ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .navbar-home-dashboard li {
+    display: inline-block;
+    margin-right: 20px;
+  }
+  
+  .navbar-home-dashboard a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.1rem;
+  }
+  
+  .navbar-home-dashboard a:hover {
+    color: #ffdd57; /* Change color on hover */
+  }
+  

@@ -1,0 +1,141 @@
+/* Container for the entire journaling page */
+.journaling-container {
+    padding: 20px;
+    font-family: Times New Roman, sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  /* Title of the page */
+  .journaling-container h1 {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  
+  /* Form container styling */
+  .journaling-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  /* Label styling */
+  .journaling-form label {
+    font-weight: bold;
+    font-size: 16px;
+  }
+  
+  /* Input and textarea styling */
+  .journaling-form input,
+  .journaling-form textarea {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .journaling-form input {
+    height: 40px;
+  }
+  
+  .journaling-form textarea {
+    height: 150px;
+    resize: vertical;
+  }
+  
+  /* Submit button styling */
+  .journaling-form .submit-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .journaling-form .submit-button:hover {
+    background-color: #45a049;
+  }
+  
+  /* Journal records container */
+  .journal-records {
+    margin-top: 30px;
+  }
+  
+  /* Individual journal entry card */
+  .journal-record {
+    background-color: #f9f9f9;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Journal header with title and action buttons */
+  .journal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .journal-title {
+    text-align: center;
+    font-size: 30px;
+    font-weight: bold;
+    color: #333;
+    flex-grow: 1;
+  }
+  
+  .journal-actions {
+    display: flex;
+    gap: 10px;
+  }
+  
+  /* Edit and delete buttons styling */
+  .edit-button,
+  .delete-button {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  
+  .edit-button {
+    color: #4CAF50;
+  }
+  
+  .edit-button:hover {
+    color: #45a049;
+  }
+  
+  .delete-button {
+    color: #f44336;
+  }
+  
+  .delete-button:hover {
+    color: #e53935;
+  }
+  
+  /* Journal entry date */
+  .journal-date {
+    font-size: 14px;
+    color: #888;
+    margin-top: 5px;
+    margin-bottom: 10px;
+  }
+  
+  /* Journal entry text */
+  .journal-text {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
+  }
+  
+  /* Message when no journal entries are present */
+  .journal-records p {
+    text-align: center;
+    font-style: italic;
+    color: #555;
+  }
+  
