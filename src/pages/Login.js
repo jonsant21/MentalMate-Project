@@ -20,7 +20,6 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('Log-In Form Data:', formData);
-    // This is where backend integration will go in the future
 
     try{
       const response = await fetch('http://localhost:8081/login', {
@@ -35,6 +34,8 @@ function Login() {
       if (response.ok) {
         const data = await response.json();
         console.log(data.message);
+        navigate('/home-dashboard'); // Navigates to HomeDashboard page
+
       } else {
         const errorData = await response.json();
         console.log(errorData.message);
@@ -48,9 +49,6 @@ function Login() {
     navigate('/signup'); // Navigates to the sign-up page from the Create Account button
   };
 
-  const handleHomeDashboardClick = () => {
-    navigate('/home-dashboard'); // Navigates to HomeDashboard page
-  };
 
   return (
     <div className="login-container">
@@ -85,13 +83,6 @@ function Login() {
         Create Account? 
       </p>
 
-      {/* Placeholder Button */}
-      <button
-        className="home-dashboard-btn"
-        onClick={handleHomeDashboardClick}
-      >
-        Go to HomeDashboard
-      </button>
     </div>
   );
 }
