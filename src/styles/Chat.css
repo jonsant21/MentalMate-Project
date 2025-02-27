@@ -1,4 +1,4 @@
-/* Chat.css */
+/* Chat container */
 .chat-container {
   width: 80%; /* Take up 80% of screen width */
   max-width: 900px; /* Limit to a maximum of 900px */
@@ -6,46 +6,58 @@
   margin: auto;
   border: 1px solid #ccc;
   padding: 20px;
-  border-radius: 15px; /* More modern rounded corners */
+  border-radius: 15px;
   background: #f9f9f9;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
+/* Chat messages container */
 .chat-messages {
-  flex-grow: 1; /* Makes sure the messages area grows to fill remaining space */
+  flex-grow: 1; /* Ensures the messages area grows to fill remaining space */
   height: 100%;
   overflow-y: auto;
   padding: 10px;
   margin-bottom: 15px;
   border-bottom: 1px solid #ccc;
+  display: flex;
+  flex-direction: column; /* Ensures messages stack vertically */
 }
 
+/* Chat bubbles */
 .chat-bubble {
   padding: 12px;
-  margin: 10px 0;
+  margin: 5px 0;
   border-radius: 12px;
-  max-width: 80%;
   font-size: 16px;
   line-height: 1.5;
   word-wrap: break-word;
+  display: inline-block;
   transition: background-color 0.3s ease;
+  max-width: 80%; /* Ensures the bubble doesn't stretch across the entire screen */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Slight shadow to make it pop */
 }
 
+/* User message bubble */
 .user {
   background-color: #007bff; /* Bright blue for user messages */
   color: white;
-  text-align: right;
-  margin-left: auto;
+  text-align: left; /* Align text to the left inside the bubble */
+  border-radius: 18px 18px 0 18px; /* More rounded corners on the right */
+  margin-left: auto; /* Align to the right side of the screen */
 }
 
+/* Assistant message bubble */
 .assistant {
-  background-color: #ddd; /* Light gray for assistant messages */
+  background-color: #ececec; /* Light gray for assistant messages */
   color: black;
-  text-align: left;
+  text-align: right; /* Align text to the right inside the bubble */
+  border-radius: 18px 18px 18px 0; /* More rounded corners on the left */
+  margin-right: auto; /* Align to the left side of the screen */
 }
 
+/* Chat input styles */
 input[type="text"] {
   width: 100%;
   padding: 15px;
@@ -62,6 +74,7 @@ input[type="text"]:focus {
   border-color: #007bff; /* Highlight border color on focus */
 }
 
+/* Submit button styles */
 button {
   width: 100%;
   padding: 15px;
@@ -77,4 +90,14 @@ button {
 
 button:hover {
   background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Chat input form */
+.chat-input {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 400px;
+  margin: auto;
 }
