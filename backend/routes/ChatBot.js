@@ -15,7 +15,7 @@ router.post('/', async (req, res) => {
 
     try {
         const response = await openai.chat.completions.create({
-            model: 'gpt-3.5-turbo', // the model name
+            model: 'gpt-4o-mini', // the model name
             messages: [
                 {
                     role: 'system', // Sets the system message that defines the assistant's behavior
@@ -25,7 +25,7 @@ router.post('/', async (req, res) => {
                     role: 'user', // User's input message
                     content: message, // the users extracted message from the frontend
                 },
-            ],
+            ]
         });
 
         // Extract reply from OpenAI response
