@@ -1,54 +1,74 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from "react";
+import "../styles/Chat.css";
 
-const Chat = () => {
-  const [message, setMessage] = useState('');
-  const [chatHistory, setChatHistory] = useState([]);
+function Chat() {
+  const [input, setInput] = useState(""); // User input state
+  const [messages, setMessages] = useState([]); // Message state
+  const [loading, setLoading] = useState(false); // Track API request status
 
-  const handleSendMessage = async () => {
-    if (!message.trim()) return;
+  const messagesEndRef = useRef(null); // Ref for auto-scrolling
 
-    // Add user message to chat history
-    setChatHistory((prev) => [...prev, { role: 'user', content: message }]);
+  // Auto-scroll to the latest message whenever messages update
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
-    // Send message to backend
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!input.trim()) return; // Prevent empty messages
+
+    // Add user message to chat and clear input immediately
+    setMessages((prev) => [...prev, { role: "user", content: input }]);
+    setInput("");
+    setLoading(true); // Disable input while waiting
+
     try {
-      const response = await fetch('http://localhost:8081/chatbot', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message }),
+      const response = await fetch("http://localhost:8081/chatbot", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: input }),
       });
-
       const data = await response.json();
-      setChatHistory((prev) => [...prev, { role: 'bot', content: data.reply }]);
+
+      // Add assistant response to chat
+      setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error("Error fetching OpenAI response:", error);
     }
 
-    // Clear input
-    setMessage('');
+    setLoading(false); // Re-enable input
   };
 
   return (
-    <div className="chat-page">
-      <h1>Mental Health Chatbot</h1>
-      <div className="chat-window">
-        {chatHistory.map((chat, index) => (
-          <div key={index} className={`chat-message ${chat.role === 'user' ? 'user' : 'bot'}`}>
-            <strong>{chat.role === 'user' ? 'You' : 'Bot'}:</strong> {chat.content}
-          </div>
-        ))}
-      </div>
-      <div className="chat-input">
-        <input
-          type="text"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="Type your message..."
-        />
-        <button onClick={handleSendMessage}>Send</button>
+    <div style={{ padding: "2rem", textAlign: "center" }}>
+      <h1>Chat with MentalMate</h1>
+      <div className="chat-container">
+        {/* Chat messages section */}
+        <div className="chat-messages">
+          {messages.map((msg, index) => (
+            <div key={index} className={`chat-bubble ${msg.role}`}>
+              {msg.content}
+            </div>
+          ))}
+          <div ref={messagesEndRef} /> {/* Auto-scroll to new messages */}
+        </div>
+
+        {/* Input field and send button */}
+        <form onSubmit={handleSubmit} className="chat-input">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Type your message..."
+            disabled={loading} // Disable when waiting
+          />
+          <button type="submit" disabled={loading}>
+            {loading ? "Sending..." : "Send"}
+          </button>
+        </form>
       </div>
     </div>
   );
-};
+}
 
 export default Chat;
