@@ -13,6 +13,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy'; // Privacy Policy page
 import Journaling from './pages/Journaling'; // Journaling page
 import HomeDashboard from './pages/HomeDashboard'; // HomeDashboard page
 import MoodTracking from './pages/MoodTracking'; // MoodTracking page
+import Profile from './pages/Profile'; // Profile page (ensure this file exists)
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
         <Route path="/journaling" element={<Journaling />} />
         <Route path="/home-dashboard" element={<HomeDashboard />} />
         <Route path="/mood-tracking" element={<MoodTracking />} />
+        <Route path="/profile" element={<Profile />} /> {/* Add your Profile route here */}
       </Routes>
 
       <Footer />
@@ -43,8 +45,12 @@ function NavbarConditionalWrapper() {
 
   return (
     // Conditionally render navbar based on the current route
-    location.pathname === "/home-dashboard" || location.pathname === "/mood-tracking" || location.pathname === "/journaling" ? (
-      <NavbarHomeDashboard /> // Render NavbarHomeDashboard for HomeDashboard and other relevant pages
+    location.pathname === "/home-dashboard" || 
+    location.pathname === "/mood-tracking" || 
+    location.pathname === "/journaling" || 
+    location.pathname === "/chat" || 
+    location.pathname === "/profile" ? (
+      <NavbarHomeDashboard /> // Render NavbarHomeDashboard for HomeDashboard, Chat, Profile, and other relevant pages
     ) : (
       <Navbar /> // Render Navbar for general pages like Home, About, SignUp, and Login
     )
