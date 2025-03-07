@@ -13,11 +13,33 @@ function MoodTracking() {
     setNotes(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     console.log('Mood:', mood);
     console.log('Notes:', notes);
-  };
+
+    try{
+      const response = await fetch('http://localhost:8081/mood', {
+
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({mood, notes}),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data.message);
+      }
+    }
+
+  catch (error) {
+    console.log(error);
+  }
+}
+
 
   return (
     <div className="mood-tracking-container">
