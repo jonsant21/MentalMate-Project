@@ -10,6 +10,8 @@ const openai = new OpenAI({
 
 //Routes/Endpoints:
 
+// http://localhost:8081/chatbot
+
 router.post('/', async (req, res) => {
     const { message } = req.body;
 
@@ -44,6 +46,9 @@ router.post('/', async (req, res) => {
 });
 
 
+//generate-affirmation: used in the homedashboard, generates an affirmation for the front page.
+
+// http://localhost:8081/chatbot/generate-affirmation
 
 router.get('/generate-affirmation', async (req, res) => {
 
@@ -78,7 +83,9 @@ router.get('/generate-affirmation', async (req, res) => {
 });
 
 
+//generate-tip: used in the homedashboard, generates an mental health tip for the front page.
 
+// http://localhost:8081/chatbot/generate-tip
 
 router.get('/generate-tip', async (req, res) => {
 

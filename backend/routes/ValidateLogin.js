@@ -4,6 +4,8 @@ const router = express.Router();
 
 //Testing session: if logged in before, will output user info
 //if not, will ask to log in:
+
+//http://localhost:8081/validate-login
 router.get('/', (req, res) => {
     if (req.session.username) {
         return res.json({

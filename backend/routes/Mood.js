@@ -9,7 +9,7 @@ const router = express.Router();
 
 
 //Saves the current day's mood:
-//localhost:8081/mood
+//http://localhost:8081/mood
 
 router.post('/', (req, res) => {
 
@@ -42,7 +42,7 @@ router.post('/', (req, res) => {
 
 
 //Check mood: Checks if a mood is logged in for today.
-//localhost:8081/mood/check-mood
+//http://localhost:8081/mood/check-mood
 
 router.get('/check-mood', (req, res) => {
 
@@ -78,7 +78,7 @@ router.get('/check-mood', (req, res) => {
 
 //Get moods: Retrieves all moods from user. Returned in decending order(Highest date first)
 //Could possibly be used in the home dashboard. 
-//localhost:8081/mood/get-moods
+//http://localhost:8081/mood/get-moods
 
 router.post('/get-moods', (req, res) => {
 
