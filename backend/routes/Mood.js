@@ -10,6 +10,7 @@ const router = express.Router();
 
 //Saves the current day's mood:
 //localhost:8081/mood
+
 router.post('/', (req, res) => {
 
     //Preprocessing:
@@ -42,6 +43,7 @@ router.post('/', (req, res) => {
 
 //Check mood: Checks if a mood is logged in for today.
 //localhost:8081/mood/check-mood
+
 router.get('/check-mood', (req, res) => {
 
     const date = new Date();
@@ -74,25 +76,29 @@ router.get('/check-mood', (req, res) => {
 
 
 
-//TO-DO:
-//wanna wait for a user to have more than one mood
-//Get moods: Retrieves all moods from user. Returned in decending order. 
-//COuld possibly be used in the home dashboard.
+//Get moods: Retrieves all moods from user. Returned in decending order(Highest date first)
+//Could possibly be used in the home dashboard. 
 //localhost:8081/mood/get-moods
 
-/*
 router.post('/get-moods', (req, res) => {
 
+    let query = "SELECT * FROM MOOD WHERE USER_ID = ? ORDER BY DATE_WRITE DESC"
 
+
+    connection.query(query, [req.session.userId], (err, results) =>{
+
+        if(err){
+            return res.status(500).json({ message: 'Database error' });
+        }
+
+
+        else{
+            return res.json({output: results})
+        }
+   
+    });
     
  });
-
-*/
-
-
-
-
-
 
 
 
