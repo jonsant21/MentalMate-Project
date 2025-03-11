@@ -1,18 +1,14 @@
-const exSession = require("express-session");
+const expressSession = require("express-session");
 
-
-// consider this as a secure global variable that
-// stores the user info securely 
-// once valid login store into the sesion object:
-
-const session = exSession({
-    secret: "TO BE CHANGED IN DEPLOYMENT IN .ENV",
-    resave: false,
-    saveUninitialized: true,
-    cookie:{
-        httpOnly: true,
-        maxAge: 1000*60*60
+const session = expressSession({
+    secret: "TO BE CHANGED IN DEPLOYMENT IN .ENV",  // Use .env for production
+    resave: false,  
+    saveUninitialized: true,  // Save empty sessions
+    cookie: {
+        httpOnly: true,  // Cookie cannot be accessed via JavaScript
+        maxAge: 1000 * 60 * 60,  // Set the cookie expiration time (1 hour)
+        secure: false,  // Set to true for production with HTTPS
     }
-})
+});
 
 module.exports = session;

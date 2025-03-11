@@ -21,7 +21,11 @@ const mood = require("./routes/Mood");
 const app = express();
 
 //Middleware: .use() in Express adds middleware to the request/response handling pipeline
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000', // Your frontend URL
+    credentials: true,  // Allow cookies to be sent
+}));
+
 app.use(express.json());
 app.use(session);
 
