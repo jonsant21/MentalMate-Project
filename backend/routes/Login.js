@@ -5,6 +5,8 @@ const router = express.Router();
 
 //Routes/Endpoints:
 
+//http://localhost:8081/login
+
 router.post('/', (req, res) => {
     // Destructuring the data from the request body
     //must be the same variable names from front (email,password)

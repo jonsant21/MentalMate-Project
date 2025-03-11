@@ -4,6 +4,7 @@ const router = express.Router();
 
 
 //Routes/Endpoints:
+//http://localhost:8081/sign-up
 
 router.post('/', (req, res) => {
 

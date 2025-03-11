@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 
 //deleting session: delete saved session (if logged in)
+
+//http://localhost:8081/logout
+
 router.get('/', (req, res) => {
     if (!req.session.username) {
         res.json({

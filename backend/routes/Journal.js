@@ -12,7 +12,9 @@ const router = express.Router();
 
 //save-journal: 
 //Function: saves the journal written by user: seems to work just fine
-//Tested: Yes. 
+
+//http://localhost:8081/journal/save-journal
+
 router.post('/save-journal', (req, res) => {
 
     //Initializing the current date:
@@ -51,7 +53,9 @@ router.post('/save-journal', (req, res) => {
 
 //Retrieve Journal:
 //Function: query the database to collect all journal entries that the user has written
-//Tested: Yes. Once more values are inserted in the database, I'll perform more tests.
+// http://localhost:8081/journal
+
+
 router.get('/', (req, res) => {
 
 let query = 'SELECT * FROM JOURNAL WHERE AUTHOR = ?'
@@ -71,7 +75,9 @@ let query = 'SELECT * FROM JOURNAL WHERE AUTHOR = ?'
 //Retrieve sends the id of each journal (key) to the front end so just send it back here to delete it
 //How? idk lol depends on how the front end displays the journals :p. Something to talk about to the front end team
 //Assumptions: the Journal ID is passed down to this function, where it is used to delete it appropriately.
-//Tested: Yes. 
+
+// http://localhost:8081/journal/delete-journal 
+
 router.delete('/delete-journal', (req, res) => {
 
     const {journalID} = req.body;
@@ -89,10 +95,12 @@ router.delete('/delete-journal', (req, res) => {
     });
 
 
-//TODO:
+
 //Update Journal:
 //Updates an existing journal. Writes to update_date variable to MYSQL, as well as updates the content/title if changed.
-//Tested: Yes
+
+//http://localhost:8081/journal/update-journal
+
 router.post('/update-journal', (req, res) => {
 
     //Initializing the current date(for updated_time variable):
