@@ -5,6 +5,7 @@ function Chat() {
   const [input, setInput] = useState(""); // User input state
   const [messages, setMessages] = useState([]); // Message state
   const [loading, setLoading] = useState(false); // Track API request status
+  const [context, setContext] = useState([]); // To store the conversation context, make sure it is empty at first
 
   const messagesEndRef = useRef(null); // Ref for auto-scrolling
 
@@ -19,19 +20,30 @@ function Chat() {
 
     // Add user message to chat and clear input immediately
     setMessages((prev) => [...prev, { role: "user", content: input }]);
+    const userInput = input; // capture input for sending
     setInput("");
     setLoading(true); // Disable input while waiting
 
     try {
+      // Send the context with the current message to the backend
       const response = await fetch("http://localhost:8081/chatbot", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: input }),
+        body: JSON.stringify({
+          message: userInput,
+          context: context, // Send the conversation context to the backend
+        }),
       });
       const data = await response.json();
 
       // Add assistant response to chat
-      setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: data.reply },
+      ]);
+
+      // Update context with the new message and assistant reply
+      setContext(data.context); // Store the updated context returned by the API
     } catch (error) {
       console.error("Error fetching OpenAI response:", error);
     }
@@ -55,11 +67,15 @@ function Chat() {
 
         {/* Input field and send button */}
         <form onSubmit={handleSubmit} className="chat-input">
-          <input
-            type="text"
+          <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
+            onInput={(e) => {
+              e.target.style.height = "auto"; // Reset height
+              e.target.style.height = `${e.target.scrollHeight}px`; // Adjust height
+            }}
             placeholder="Type your message..."
+            className="chat-textarea"
             disabled={loading} // Disable when waiting
           />
           <button type="submit" disabled={loading}>
