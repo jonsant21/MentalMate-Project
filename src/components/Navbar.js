@@ -5,7 +5,10 @@ import '../styles/Navbar.css';
 function Navbar() {
   return (
     <nav className="navbar">
-      <h1>MentalMate</h1>
+      {/* MentalMate Logo */}
+      <div className="logo">
+        <img src="/MentalMate Logo 02-26.png" alt="MentalMate Logo" className="logo-img" />
+      </div>
       <ul className="nav-links">
         <li>
           <Link to="/">Home</Link>

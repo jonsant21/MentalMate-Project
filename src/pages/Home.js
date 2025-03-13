@@ -6,6 +6,11 @@ import { FaUserCheck, FaBrain, FaChartLine } from 'react-icons/fa'; // Import ic
 function Home() {
   return (
     <div className="home-container">
+      {/* Logo Section */}
+      <div className="logo">
+        <img src="/MentalMate Logo 02-26.png" alt="MentalMate Logo" className="logo-img" />
+      </div>
+
       {/* Hero Section */}
       <section className="hero-section">
         <h1>Welcome to MentalMate</h1>
