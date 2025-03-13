@@ -13,6 +13,10 @@ const router = express.Router();
 
 router.post('/', (req, res) => {
 
+    if (!req.session.userId) {
+        return res.status(401).json({ message: 'Session expired or not logged in' });
+      }
+
     //Preprocessing:
     //Retrieving mood and additional notes from frontend
     const { mood, notes } = req.body;
@@ -31,6 +35,7 @@ router.post('/', (req, res) => {
     
     connection.query(query, [currentDate, mood, notes?.trim() ? notes : 'No comment', req.session.userId], (err, results) =>{
         if(err){
+            console.log('Database error:', err); // Log the full error
             return res.status(500).json({ message: 'Database error' });
         }
 
