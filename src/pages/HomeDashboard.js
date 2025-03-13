@@ -1,49 +1,62 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/HomeDashboard.css';
 
-// Array of Affirmations for Random Selection
-const affirmations = [
-  "You are stronger than you think.",
-  "Every day is a fresh start.",
-  "You are worthy of love and happiness.",
-  "Believe in yourself and your abilities.",
-  "Progress, not perfection.",
-  "Your feelings are valid.",
-  "You are enough just as you are.",
-  "Take things one step at a time.",
-  "Breathe. You are in control.",
-  "You deserve to prioritize your well-being."
-];
 
-// Array of Mental Health Tips for Random Selection
-const mentalHealthTips = [
-  "Take 5 deep breaths right now. It will help reduce stress and refocus your mind.",
-  "Take a 10-minute walk outside and soak in some fresh air to reset your thoughts.",
-  "Try a short meditation session to calm your mind and reduce stress.",
-  "Drink a glass of water to stay hydrated and help improve your mood.",
-  "Take a break from your screen for 10 minutes and stretch your body.",
-  "Write down 3 things you're grateful for today to boost your mood.",
-  "Try practicing mindfulness by focusing on your breathing for a few minutes.",
-  "Reach out to a friend or family member for a quick chat to feel connected.",
-  "Listen to your favorite music to uplift your spirits and relax.",
-  "Take a moment to acknowledge your feelings and let yourself just be."
-];
 
-// Function to get a random affirmation
-const getRandomAffirmation = () => {
-  return affirmations[Math.floor(Math.random() * affirmations.length)];
-};
+async function getRandomAffirmation() {
+  try {
+    const response = await fetch("http://localhost:8081/chatbot/generate-affirmation"); // Adjust URL if necessary
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data.reply;
+  } catch (error) {
+    console.error("Error fetching affirmation:", error);
+    return "Stay positive!"; // Default fallback affirmation
+  }
+}
 
-// Function to get a random mental health tip
-const getRandomMentalHealthTip = () => {
-  return mentalHealthTips[Math.floor(Math.random() * mentalHealthTips.length)];
-};
+
+
+async function getRandomMentalHealthTip() {
+  try {
+    const response = await fetch("http://localhost:8081/chatbot/generate-tip"); // Adjust URL if necessary
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data.reply;
+  } catch (error) {
+    console.error("Error fetching mental health tip:", error);
+    return "Take care of yourself!"; // Default fallback tip
+  }
+}
+
+
+
 
 function HomeDashboard() {
-  // Call function once to avoid getting a new quote on every render
-  const dailyAffirmation = getRandomAffirmation();
-  const dailyTip = getRandomMentalHealthTip();
+  const [affirmation, setAffirmation] = useState("Loading...");
+  const [mentalHealthTip, setMentalHealthTip] = useState("Loading...");
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const dailyAffirmation = await getRandomAffirmation();
+        const dailyTip = await getRandomMentalHealthTip();
+        setAffirmation(dailyAffirmation);
+        setMentalHealthTip(dailyTip);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setAffirmation("Couldn't load affirmation.");
+        setMentalHealthTip("Couldn't load tip.");
+      }
+    }
+
+    fetchData();
+  }, []); 
 
   return (
     <div className="home-dashboard-container">
@@ -65,16 +78,16 @@ function HomeDashboard() {
         </div>
       </section>
 
-      {/* Daily Affirmation Section (Fixed) */}
+      {/* Daily Affirmation Section */}
       <section className="daily-affirmation">
         <h2>🌟 Daily Affirmation</h2>
-        <p>{dailyAffirmation}</p>
+        <p>{affirmation}</p>
       </section>
 
-      {/* Mental Health Tip Section (Fixed) */}
+      {/* Mental Health Tip Section */}
       <section className="mental-health-tips">
         <h2>🧘 Mental Health Tip</h2>
-        <p>{dailyTip}</p>
+        <p>{mentalHealthTip}</p>
       </section>
 
       {/* Other Sections */}

@@ -40,10 +40,12 @@ function MoodTracking() {
     setNotes(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     console.log('Mood:', mood);
     console.log('Notes:', notes);
+
 
     // Save the selected mood for the selected date
     setMoodHistory({
@@ -98,6 +100,30 @@ function MoodTracking() {
     nextMonth.setDate(1); // Set the day to 1st of the next month
     setSelectedDate(nextMonth);
   };
+
+    try{
+      const response = await fetch('http://localhost:8081/mood', {
+
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', 
+        body: JSON.stringify({mood, notes}),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data.message);
+      }
+    }
+
+  catch (error) {
+    console.log(error);
+  }
+}
+
+
 
   return (
     <div className="mood-tracking-container">

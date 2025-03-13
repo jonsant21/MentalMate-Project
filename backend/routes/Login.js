@@ -5,9 +5,12 @@ const router = express.Router();
 
 //Routes/Endpoints:
 
-router.post('/log-in', (req, res) => {
+//http://localhost:8081/login
+
+router.post('/', (req, res) => {
     // Destructuring the data from the request body
     //must be the same variable names from front (email,password)
+    console.log("Session before login:", req.session)
 
     const { email, password } = req.body;
     
@@ -28,50 +31,14 @@ router.post('/log-in', (req, res) => {
         req.session.email = email;
         req.session.password = password;
         req.session.username = results[0].USERNAME;
-        return res.json({message: `Info saved successfully in the backend. Hello ${req.session.username}`});
+        req.session.userId = results[0].ID;
+
+        console.log("Session after login: ", req.session)
+        
+        return res.json({message: `Info saved successfully in the backend. Hello ${req.session.username}, with ID number ${req.session.userId}`});
     });
 });
 
-
-
-
-//Testing session: if logged in before, will output user info
-//if not, will ask to log in:
-router.get('/validate-login', (req, res) => {
-    if (req.session.username) {
-        return res.json({
-            message: "Logged in before",
-            User: req.session.username,
-            Password: req.session.email
-        })
-    }
-    else {
-        return res.send("Have not logged in before. Please log in")
-    }
-});
-
-
-
-//deleting session: delete saved session (if logged in)
-router.get('/logout', (req, res) => {
-    if (!req.session.username) {
-        res.json({
-            message: "No session saved"
-
-        });
-    }
-
-    else{
-        req.session.destroy((err) => {
-            if (err){
-                return res.status(500).send("Could not delete session.");
-            }
-            res.send("Session deleted successfully (Logged out)");
-        })
-    }
-    
-    
-});
 
 
 
