@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import '../styles/Navbar.css'; // Assuming you want to use the same styles
-import { useNavigate } from 'react-router-dom';
+import '../styles/NavbarHomeDashboard.css'; // Assuming your CSS is in this file
+
 
 function NavbarHomeDashboard() {
 
@@ -31,17 +31,28 @@ function NavbarHomeDashboard() {
 
 
   return (
-    <nav className="navbar">
-      <h1>MentalMate</h1>
-      <ul className="nav-links">
-        <li><Link to="/home-dashboard">Home</Link></li>
-        <li><Link to="/mood-tracking">Mood Tracking</Link></li>
-        <li><Link to="/journaling">Journaling</Link></li>
-        <li><Link to="/chat">Chat</Link></li>
-        <li><Link to="/profile">Profile</Link></li>
-        <li><button onClick={handleLogout}>Logout</button></li> {/* Button for logout */}
-      </ul>
-    </nav>
+
+    <div className="navbar-home-dashboard">
+      {/* MentalMate Logo */}
+      <div className="logo">
+        <img src="/MentalMate Logo 02-26.png" alt="MentalMate Logo" className="logo-img" />
+      </div>
+
+      {/* Navbar Links */}
+      <nav className="navbar-home-dashboard">
+        <ul>
+          <li><Link to="/home">Home</Link></li>
+          <li><Link to="/mood-tracking">Mood Tracking</Link></li>
+          <li><Link to="/journaling">Journaling</Link></li>
+          <li><Link to="/chat">Chat</Link></li>
+          <li><Link to="/profile">Profile</Link></li>
+          
+          {/* Change the Logout button to redirect to Home */}
+          <li><Link to="/home">Logout</Link></li>
+        </ul>
+      </nav>
+    </div>
+
   );
 }
 

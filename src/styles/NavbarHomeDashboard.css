@@ -1,27 +1,36 @@
-/* NavbarHomeDashboard.css */
+/* NavbarHomeDashboard Container */
 .navbar-home-dashboard {
-    background-color: #007bff;
-    padding: 10px 20px;
-    text-align: center;
-  }
-  
-  .navbar-home-dashboard ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  .navbar-home-dashboard li {
-    display: inline-block;
-    margin-right: 20px;
-  }
-  
-  .navbar-home-dashboard a {
-    color: white;
-    text-decoration: none;
-    font-size: 1.1rem;
-  }
-  
-  .navbar-home-dashboard a:hover {
-    color: #ffdd57; /* Change color on hover */
-  }
-  
+  background-color: #007bff;
+  padding: 10px 20px;
+  text-align: center;
+}
+
+/* Logo Style */
+.navbar-home-dashboard .logo img {
+  width: 150px; /* Consistent logo size for both Navbar components */
+  height: auto; /* Maintain aspect ratio */
+  display: block;
+  margin: 0 auto;
+}
+
+/* Navbar Links */
+.navbar-home-dashboard ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.navbar-home-dashboard li {
+  display: inline-block;
+  margin-right: 20px;
+}
+
+.navbar-home-dashboard a {
+  color: white;
+  text-decoration: none;
+  font-size: 1.1rem; /* Ensure text size is consistent */
+  font-weight: bold;
+}
+
+.navbar-home-dashboard a:hover {
+  color: #ffdd57; /* Change color on hover */
+}

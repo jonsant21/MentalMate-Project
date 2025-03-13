@@ -1,26 +1,56 @@
+/* Navbar Container */
+.navbar-container {
+  text-align: center; /* This will center all text and elements inside */
+  padding: 20px;
+  width: 100%;
+  display: flex; /* Use flexbox to align logo and navbar */
+  flex-direction: column; /* Stack logo and navbar vertically */
+  align-items: center; /* Center align the logo and navbar horizontally */
+  box-sizing: border-box;
+}
+
+/* Logo Style */
+.logo {
+  margin-bottom: 10px; /* Small space below the logo */
+}
+
+.navbar-container .logo img {
+  width: 150px; /* Set a consistent logo size */
+  height: auto; /* Maintain aspect ratio */
+  display: block;
+  margin: 0 auto;
+}
+
+/* Navbar Styling */
 .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #4a90e2;
-    padding: 1rem 2rem;
-    color: white;
-  }
-  
-  .nav-links {
-    list-style: none;
-    display: flex;
-    gap: 1.5rem;
-  }
-  
-  .nav-links a {
-    text-decoration: none;
-    color: white;
-    font-weight: bold;
-    transition: color 0.3s ease;
-  }
-  
-  .nav-links a:hover {
-    color: #d4d4d4;
-  }
-  
+  background-color: #4a90e2; /* Navbar background color */
+  padding: 10px 0;
+  margin-top: 20px;
+  width: 100%; /* Full width for navbar */
+  text-align: center; /* Center the navbar text */
+}
+
+/* Navbar Links */
+.navbar ul {
+  list-style-type: none;
+  display: flex;
+  justify-content: center; /* Center the navbar items */
+  gap: 20px;
+}
+
+.navbar li {
+  display: inline-block;
+}
+
+.navbar a {
+  color: white; /* Navbar links text color */
+  text-decoration: none;
+  font-size: 1.1rem; /* Ensure text size is consistent */
+  font-weight: bold;
+  padding: 5px 10px;
+}
+
+.navbar a:hover {
+  background-color: #357abd; /* Hover effect */
+  border-radius: 5px;
+}
