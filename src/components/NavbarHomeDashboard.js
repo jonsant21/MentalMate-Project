@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../styles/NavbarHomeDashboard.css'; // Assuming your CSS is in this file
 
 
@@ -41,14 +41,14 @@ function NavbarHomeDashboard() {
       {/* Navbar Links */}
       <nav className="navbar-home-dashboard">
         <ul>
-          <li><Link to="/home">Home</Link></li>
+          <li><Link to="/home-dashboard">Home</Link></li>
           <li><Link to="/mood-tracking">Mood Tracking</Link></li>
           <li><Link to="/journaling">Journaling</Link></li>
           <li><Link to="/chat">Chat</Link></li>
           <li><Link to="/profile">Profile</Link></li>
           
           {/* Change the Logout button to redirect to Home */}
-          <li><Link to="/home">Logout</Link></li>
+          <button onClick={handleLogout}>Logout</button>
         </ul>
       </nav>
     </div>

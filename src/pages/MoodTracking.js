@@ -52,6 +52,29 @@ function MoodTracking() {
       ...moodHistory,
       [selectedDate.toDateString()]: { mood, notes }, // Store the mood by date
     });
+
+
+    try{
+      const response = await fetch('http://localhost:8081/mood', {
+
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', 
+        body: JSON.stringify({mood, notes}),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data.message);
+      }
+    }
+
+  catch (error) {
+    console.log(error);
+  }
+  
   };
 
   const handleDateChange = (date) => {
@@ -101,27 +124,8 @@ function MoodTracking() {
     setSelectedDate(nextMonth);
   };
 
-    try{
-      const response = await fetch('http://localhost:8081/mood', {
 
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include', 
-        body: JSON.stringify({mood, notes}),
-      });
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log(data.message);
-      }
-    }
-
-  catch (error) {
-    console.log(error);
-  }
-}
 
 
 
