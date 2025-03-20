@@ -16,6 +16,7 @@ const logout = require('./routes/Logout');
 const journal = require("./routes/Journal");
 const chatbot = require("./routes/ChatBot");
 const mood = require("./routes/Mood");
+const profile = require("./routes/Profile")
 
 //Initializing Express:
 const app = express();
@@ -39,6 +40,7 @@ app.use('/logout', logout);
 app.use('/journal', journal);
 app.use('/chatbot', chatbot);
 app.use('/mood', mood);
+app.use('/profile', profile)
 
 app.get("/", (req, res) => {
     return res.json({message: "Hello from the backend"})
