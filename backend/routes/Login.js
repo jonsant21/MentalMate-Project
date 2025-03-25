@@ -32,6 +32,11 @@ router.post('/', (req, res) => {
         req.session.password = password;
         req.session.username = results[0].USERNAME;
         req.session.userId = results[0].ID;
+        req.session.firstName = results[0].FIRST_NAME;
+        req.session.lastName = results[0].LAST_NAME;
+        req.session.dateofBirth = results[0].DOB;
+        req.session.gender = results[0].GENDER;
+        req.session.phoneNumber = results[0].PHONE_NUMBER;
 
         console.log("Session after login: ", req.session)
         
