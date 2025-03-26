@@ -60,7 +60,7 @@ router.post('/save-journal', (req, res) => {
 
 router.get('/', (req, res) => {
 
-let query = 'SELECT * FROM JOURNAL WHERE AUTHOR = ?'
+let query = 'SELECT * FROM JOURNAL WHERE AUTHOR = ? ORDER BY WRITE_DATE DESC'
 
         connection.query(query, [req.session.userId], (err, results) =>{
             if(err){
@@ -151,6 +151,26 @@ router.post('/update-journal', (req, res) => {
 });
 
 
+//Retrieving one joournal for the home dashboard; let it be the most recently created one:
+//If a user has no journal entries, return a default text:
+
+//http://localhost:8081/journal/get-last-journal
+
+router.get('/get-last-journal', (req, res) => {
+    let query = 'SELECT CONTENT FROM JOURNAL WHERE AUTHOR = ? ORDER BY WRITE_DATE DESC LIMIT 1';
+
+    connection.query(query, [req.session.userId], (err, results) => {
+        if (err) {
+            return res.status(500).json({ message: 'Database error' });
+        }
+
+        if (results.length > 0) {
+            return res.json(results[0]); 
+        } else {
+            return res.json({ CONTENT: "No journal entry available. Create one now!" });  // Default response
+        }
+    });
+});
 
 
 

@@ -42,22 +42,31 @@ function Journaling() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const newEntry = { title, entry };
-
+    
+    // Ensure title and entry are strings and trim them
+    const newTitle = (title || '').trim(); // Default to an empty string if title is undefined
+    const newEntry = (entry || '').trim(); // Default to an empty string if entry is undefined
+  
+    const entryData = {
+      title: newTitle !== "" ? newTitle : (editingIndex !== null && journalEntries[editingIndex] ? journalEntries[editingIndex].TITLE : ''),
+      entry: newEntry
+    };
+  
     try {
-      if (editingIndex !== null) {
+      if (editingIndex !== null && journalEntries[editingIndex]) {
         // Update existing entry
         const journalID = journalEntries[editingIndex].ID;
         const response = await fetch(`http://localhost:8081/journal/update-journal`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
-          body: JSON.stringify({ ...newEntry, journalID})
+          body: JSON.stringify({ ...entryData, journalID })
         });
+  
         if (!response.ok) throw new Error('Failed to update entry');
-
+  
         const updatedEntry = await response.json();
-
+  
         const updatedEntries = [...journalEntries];
         updatedEntries[editingIndex] = updatedEntry;
         setJournalEntries(updatedEntries);
@@ -68,14 +77,15 @@ function Journaling() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
-          body: JSON.stringify(newEntry),
+          body: JSON.stringify(entryData),
         });
+  
         if (!response.ok) throw new Error('Failed to save entry');
         const savedEntry = await response.json();
-        console.log("Saved new entry")
+        console.log("Saved new entry");
         setJournalEntries([savedEntry, ...journalEntries]);
       }
-
+  
       setIsCreating(false);
       setTitle('');
       setEntry('');
@@ -83,6 +93,9 @@ function Journaling() {
       console.error('Error saving journal entry:', error);
     }
   };
+  
+  
+  
 
   const handleEdit = (index) => {
     const entryToEdit = journalEntries[index];
@@ -144,7 +157,7 @@ function Journaling() {
                   <div className="journal-header" onClick={() => toggleExpand(index)}>
                     <h3 className="journal-title">{entryItem.TITLE || 'Untitled Entry'}</h3>
                     <div className="journal-header-right">
-                      <p className="journal-date">{entryItem.WRITE_DATE}</p>
+                      <p className="journal-date">Created on: <br></br> {new Date(entryItem.WRITE_DATE).toLocaleDateString()}</p>
                       <div className="journal-actions" onClick={(e) => e.stopPropagation()}>
                         <button onClick={() => handleEdit(index)} className="edit-button">
                           <FaPen />
