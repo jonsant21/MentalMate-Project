@@ -39,6 +39,8 @@ app.use('/validate-login', validateLogin);
 app.use('/logout', logout);
 app.use('/journal', journal);
 app.use('/chatbot', chatbot);
+app.use('/tts', require('./routes/TTS'));
+
 app.use('/mood', mood);
 app.use('/profile', profile)
 
