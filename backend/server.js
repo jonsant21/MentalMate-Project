@@ -15,12 +15,18 @@ const validateLogin = require('./routes/ValidateLogin');
 const logout = require('./routes/Logout');
 const journal = require("./routes/Journal");
 const chatbot = require("./routes/ChatBot");
+const mood = require("./routes/Mood");
+const profile = require("./routes/Profile")
 
 //Initializing Express:
 const app = express();
 
 //Middleware: .use() in Express adds middleware to the request/response handling pipeline
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000', // Your frontend URL
+    credentials: true,  // Allow cookies to be sent
+}));
+
 app.use(express.json());
 app.use(session);
 
@@ -34,6 +40,9 @@ app.use('/logout', logout);
 app.use('/journal', journal);
 app.use('/chatbot', chatbot);
 app.use('/tts', require('./routes/TTS'));
+
+app.use('/mood', mood);
+app.use('/profile', profile)
 
 app.get("/", (req, res) => {
     return res.json({message: "Hello from the backend"})

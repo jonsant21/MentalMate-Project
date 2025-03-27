@@ -5,9 +5,12 @@ const router = express.Router();
 
 //Routes/Endpoints:
 
+//http://localhost:8081/login
+
 router.post('/', (req, res) => {
     // Destructuring the data from the request body
     //must be the same variable names from front (email,password)
+    console.log("Session before login:", req.session)
 
     const { email, password } = req.body;
     
@@ -29,6 +32,14 @@ router.post('/', (req, res) => {
         req.session.password = password;
         req.session.username = results[0].USERNAME;
         req.session.userId = results[0].ID;
+        req.session.firstName = results[0].FIRST_NAME;
+        req.session.lastName = results[0].LAST_NAME;
+        req.session.dateofBirth = results[0].DOB;
+        req.session.gender = results[0].GENDER;
+        req.session.phoneNumber = results[0].PHONE_NUMBER;
+
+        console.log("Session after login: ", req.session)
+        
         return res.json({message: `Info saved successfully in the backend. Hello ${req.session.username}, with ID number ${req.session.userId}`});
     });
 });

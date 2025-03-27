@@ -35,19 +35,40 @@ async function getRandomMentalHealthTip() {
 }
 
 
+async function getLastJournal() {
+  try {
+    const response = await fetch("http://localhost:8081/journal/get-last-journal", {
+          method: 'GET',
+          credentials: 'include', // Ensures cookies (user session) are sent
+        }); // Adjust URL if necessary
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data || {};
+  } catch (error) {
+    console.error("Error fetching journal entry:", error);
+    return "Create a new journal!"; // Default fallback tip
+  }
+}
+
 
 
 function HomeDashboard() {
   const [affirmation, setAffirmation] = useState("Loading...");
   const [mentalHealthTip, setMentalHealthTip] = useState("Loading...");
+  const [lastJournal, setJournal] = useState(null);
 
   useEffect(() => {
     async function fetchData() {
       try {
         const dailyAffirmation = await getRandomAffirmation();
         const dailyTip = await getRandomMentalHealthTip();
+        const lastEntry = await getLastJournal();
         setAffirmation(dailyAffirmation);
         setMentalHealthTip(dailyTip);
+        setJournal(lastEntry);
       } catch (error) {
         console.error("Error fetching data:", error);
         setAffirmation("Couldn't load affirmation.");
@@ -107,7 +128,7 @@ function HomeDashboard() {
       <section className="journaling-preview">
         <h2>📖 Your Last Journal Entry</h2>
         <p>
-          "HelloWorld"
+        {lastJournal?.CONTENT || "No journal entry available."}
         </p>
         <Link to="/journaling">
           <button className="small-button">Continue Writing</button>

@@ -12,7 +12,9 @@ const router = express.Router();
 
 //save-journal: 
 //Function: saves the journal written by user: seems to work just fine
-//Tested: Yes. 
+
+//http://localhost:8081/journal/save-journal
+
 router.post('/save-journal', (req, res) => {
 
     //Initializing the current date:
@@ -31,17 +33,19 @@ router.post('/save-journal', (req, res) => {
 
 
     // Retrieve journal info:
-    const {title, content} = req.body;
+    const {title, entry} = req.body;
     
     //SQL query:
     let query = 'INSERT INTO JOURNAL (TITLE, WRITE_DATE, CONTENT, AUTHOR) VALUES (?, ?, ?, ?)';
 
-    connection.query(query, [title, currentDateTime, content, req.session.userId], (err, results) =>{
+    connection.query(query, [title, currentDateTime, entry, req.session.userId], (err, results) =>{
         if(err){
             return res.status(500).json({ message: 'Database error' });
         }
 
-        return res.json({message: `Info saved successfully in the backend. Journal saved for ${req.session.username}`});
+        const newEntryId = results.insertId;
+
+        return res.json({TITLE: title, CONTENT: entry, ID: newEntryId, WRITE_DATE: currentDateTime});
     });
 });
 
@@ -51,10 +55,12 @@ router.post('/save-journal', (req, res) => {
 
 //Retrieve Journal:
 //Function: query the database to collect all journal entries that the user has written
-//Tested: Yes. Once more values are inserted in the database, I'll perform more tests.
+// http://localhost:8081/journal
+
+
 router.get('/', (req, res) => {
 
-let query = 'SELECT * FROM JOURNAL WHERE AUTHOR = ?'
+let query = 'SELECT * FROM JOURNAL WHERE AUTHOR = ? ORDER BY WRITE_DATE DESC'
 
         connection.query(query, [req.session.userId], (err, results) =>{
             if(err){
@@ -71,60 +77,100 @@ let query = 'SELECT * FROM JOURNAL WHERE AUTHOR = ?'
 //Retrieve sends the id of each journal (key) to the front end so just send it back here to delete it
 //How? idk lol depends on how the front end displays the journals :p. Something to talk about to the front end team
 //Assumptions: the Journal ID is passed down to this function, where it is used to delete it appropriately.
-//Tested: Yes. 
-router.delete('/delete-journal', (req, res) => {
 
-    const {journalID} = req.body;
+// http://localhost:8081/journal/delete-journal 
+
+router.delete('/delete-journal/:id', (req, res) => {
+
+    const {id} = req.params;
+    console.log(id)
 
     let query = 'DELETE FROM JOURNAL WHERE ID = ?';
     
-            connection.query(query, [journalID], (err, results) =>{
+            connection.query(query, [id], (err, results) =>{
                 if(err){
                  return res.status(500).json({ message: 'Database error' });
                 }
     
-                return res.json({message: `Journal enrty ${journalID} deleted successfully.`});
+                return res.json({message: `Journal enrty ${id} deleted successfully.`});
             });
         
     });
 
 
-//TODO:
+
 //Update Journal:
 //Updates an existing journal. Writes to update_date variable to MYSQL, as well as updates the content/title if changed.
-//Tested: Yes
+
+//http://localhost:8081/journal/update-journal
+
 router.post('/update-journal', (req, res) => {
+    const { title, entry, journalID } = req.body;
 
-    //Initializing the current date(for updated_time variable):
-    const date = new Date();
-
-    const day = date.getDate();
-    const month = date.getMonth()+1;
-    const year = date.getFullYear();
-    const currentDate = `${year}-${month}-${day}`;
-
-    // Get the current time as a string: 24 hour time
-    const currentTime = date.toLocaleTimeString('en-US', { hour12: false });
-
-    //Combining them together:
-    const updatedDateTime = `${currentDate} ${currentTime}`;
-
-
-    // Retrieve journal info: the journal id is also needed
-    const {title, content, journalID} = req.body;
+    // First, retrieve the current WRITE_DATE from the journal entry
+    const selectQuery = 'SELECT WRITE_DATE FROM JOURNAL WHERE ID = ?';
     
-    //SQL query:
-    let query = 'UPDATE JOURNAL SET UPDATE_DATE = ?, TITLE = ?, CONTENT = ? WHERE ID = ?';
-
-    connection.query(query, [updatedDateTime, title, content, journalID], (err, results) =>{
-        if(err){
-            return res.status(500).json({ message: 'Database error' });
+    connection.query(selectQuery, [journalID], (err, results) => {
+        if (err) {
+            return res.status(500).json({ message: 'Database error while fetching WRITE_DATE' });
         }
 
-        return res.json({message: `Journal entry ${journalID} updated successfully.`});
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'Journal entry not found' });
+        }
+
+        // Get the original WRITE_DATE
+        const originalWriteDate = results[0].WRITE_DATE;
+
+        // Initialize the current date and time for the update
+        const date = new Date();
+        const day = date.getDate();
+        const month = date.getMonth() + 1;
+        const year = date.getFullYear();
+        const currentDate = `${year}-${month}-${day}`;
+        const currentTime = date.toLocaleTimeString('en-US', { hour12: false });
+        const updatedDateTime = `${currentDate} ${currentTime}`;
+
+        // SQL query to update the journal entry
+        const updateQuery = 'UPDATE JOURNAL SET UPDATE_DATE = ?, TITLE = ?, CONTENT = ? WHERE ID = ?';
+
+        connection.query(updateQuery, [updatedDateTime, title, entry, journalID], (err, results) => {
+            if (err) {
+                return res.status(500).json({ message: 'Database error during update' });
+            }
+
+            // Return the updated entry with the original WRITE_DATE
+            return res.json({
+                TITLE: title,
+                CONTENT: entry,
+                ID: journalID,
+                WRITE_DATE: originalWriteDate, // Passing the original WRITE_DATE
+            });
+        });
     });
 });
 
+
+//Retrieving one joournal for the home dashboard; let it be the most recently created one:
+//If a user has no journal entries, return a default text:
+
+//http://localhost:8081/journal/get-last-journal
+
+router.get('/get-last-journal', (req, res) => {
+    let query = 'SELECT CONTENT FROM JOURNAL WHERE AUTHOR = ? ORDER BY WRITE_DATE DESC LIMIT 1';
+
+    connection.query(query, [req.session.userId], (err, results) => {
+        if (err) {
+            return res.status(500).json({ message: 'Database error' });
+        }
+
+        if (results.length > 0) {
+            return res.json(results[0]); 
+        } else {
+            return res.json({ CONTENT: "No journal entry available. Create one now!" });  // Default response
+        }
+    });
+});
 
 
 

@@ -9,6 +9,9 @@ const openai = new OpenAI({
 });
 
 //Routes/Endpoints:
+
+// http://localhost:8081/chatbot
+
 router.post('/', async (req, res) => {
     let { message, context } = req.body; // Expecting message and optional context array
 
@@ -62,11 +65,17 @@ router.post('/', async (req, res) => {
 });
 
 
+//generate-affirmation: used in the homedashboard, generates an affirmation for the front page.
+
+// http://localhost:8081/chatbot/generate-affirmation
+
 router.get('/generate-affirmation', async (req, res) => {
 
     try {
         const response = await openai.chat.completions.create({
+
             model: 'gpt-4o-mini', // the model name
+
             messages: [
                 {
                     role: 'system', // Sets the system message that defines the assistant's behavior
@@ -95,13 +104,17 @@ router.get('/generate-affirmation', async (req, res) => {
 });
 
 
+//generate-tip: used in the homedashboard, generates an mental health tip for the front page.
 
+// http://localhost:8081/chatbot/generate-tip
 
 router.get('/generate-tip', async (req, res) => {
 
     try {
         const response = await openai.chat.completions.create({
+
             model: 'gpt-4o-mini', // the model name
+
             messages: [
                 {
                     role: 'system', // Sets the system message that defines the assistant's behavior

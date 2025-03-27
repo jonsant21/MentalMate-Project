@@ -9,9 +9,11 @@ function Chat() {
   const [input, setInput] = useState(""); // User input state
   const [messages, setMessages] = useState([]); // Message state
   const [loading, setLoading] = useState(false); // Track API request status
+
   const [context, setContext] = useState([]); // To store the conversation context, make sure it is empty at first
   const [voiceMode, setVoiceMode] = useState(false); // Toggle voice mode
   const [listening, setListening] = useState(false); // Speech recognition state
+
 
   const messagesEndRef = useRef(null); // Ref for auto-scrolling
 
@@ -67,7 +69,9 @@ function Chat() {
 
     // Add user message to chat and clear input immediately
     setMessages((prev) => [...prev, { role: "user", content: input }]);
+
     const userInput = input; // capture input for sending
+
     setInput("");
     setLoading(true); // Disable input while waiting
 
@@ -80,10 +84,12 @@ function Chat() {
           message: userInput,
           context: context, // Send the conversation context to the backend
         }),
+
       });
       const data = await response.json();
 
       // Add assistant response to chat
+
       setMessages((prev) => [
         ...prev,
         { role: "assistant", content: data.reply },
@@ -91,11 +97,12 @@ function Chat() {
 
       // Update context with the new message and assistant reply
       setContext(data.context); // Store the updated context returned by the API
-
+      
       // If in voice mode, speak the assistant's reply using OpenAI TTS 
       if (voiceMode) {
         playTTSResponse(data.reply);
       }
+
 
     } catch (error) {
       console.error("Error fetching OpenAI response:", error);
@@ -213,6 +220,7 @@ function Chat() {
           <div ref={messagesEndRef} />
         </div>
 
+
         {voiceMode ? (
           <>
             {/* Voice mode: show record/stop button and a separate switch to text mode */}
@@ -261,6 +269,7 @@ function Chat() {
             </form>
           </>
         )}
+
       </div>
     </div>
   );
