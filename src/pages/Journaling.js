@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaPen, FaTrashAlt, FaPlus } from 'react-icons/fa';
 import '../styles/Journaling.css';
 
@@ -10,6 +10,26 @@ function Journaling() {
   const [editingIndex, setEditingIndex] = useState(null);
   const [expandedEntries, setExpandedEntries] = useState({});
 
+  // Fetch journal entries on component load
+  useEffect(() => {
+    const fetchJournalEntries = async () => {
+      try {
+        const response = await fetch('http://localhost:8081/journal', {
+          method: 'GET',
+          credentials: 'include', // Ensures cookies (user session) are sent
+        });
+        if (!response.ok) throw new Error('Failed to fetch entries');
+        const data = await response.json();
+        console.log('Fetched data:', data);
+        setJournalEntries(data);
+      } catch (error) {
+        console.error('Error fetching journal entries:', error);
+      }
+    };
+
+    fetchJournalEntries();
+  }, []);
+
   const handleTitleChange = (e) => setTitle(e.target.value);
   const handleEntryChange = (e) => setEntry(e.target.value);
 
@@ -20,23 +40,62 @@ function Journaling() {
     setEntry('');
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const newEntry = { title, entry, date: new Date().toLocaleDateString() };
-
-    if (editingIndex !== null) {
-      const updatedEntries = [...journalEntries];
-      updatedEntries[editingIndex] = newEntry;
-      setJournalEntries(updatedEntries);
-      setEditingIndex(null);
-    } else {
-      setJournalEntries([newEntry, ...journalEntries]);
+    
+    // Ensure title and entry are strings and trim them
+    const newTitle = (title || '').trim(); // Default to an empty string if title is undefined
+    const newEntry = (entry || '').trim(); // Default to an empty string if entry is undefined
+  
+    const entryData = {
+      title: newTitle !== "" ? newTitle : (editingIndex !== null && journalEntries[editingIndex] ? journalEntries[editingIndex].TITLE : ''),
+      entry: newEntry
+    };
+  
+    try {
+      if (editingIndex !== null && journalEntries[editingIndex]) {
+        // Update existing entry
+        const journalID = journalEntries[editingIndex].ID;
+        const response = await fetch(`http://localhost:8081/journal/update-journal`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ ...entryData, journalID })
+        });
+  
+        if (!response.ok) throw new Error('Failed to update entry');
+  
+        const updatedEntry = await response.json();
+  
+        const updatedEntries = [...journalEntries];
+        updatedEntries[editingIndex] = updatedEntry;
+        setJournalEntries(updatedEntries);
+        setEditingIndex(null);
+      } else {
+        // Create new entry
+        const response = await fetch('http://localhost:8081/journal/save-journal', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify(entryData),
+        });
+  
+        if (!response.ok) throw new Error('Failed to save entry');
+        const savedEntry = await response.json();
+        console.log("Saved new entry");
+        setJournalEntries([savedEntry, ...journalEntries]);
+      }
+  
+      setIsCreating(false);
+      setTitle('');
+      setEntry('');
+    } catch (error) {
+      console.error('Error saving journal entry:', error);
     }
-
-    setTitle('');
-    setEntry('');
-    setIsCreating(false);
   };
+  
+  
+  
 
   const handleEdit = (index) => {
     const entryToEdit = journalEntries[index];
@@ -46,12 +105,24 @@ function Journaling() {
     setIsCreating(true);
   };
 
-  const handleDelete = (index) => {
-    if (window.confirm('Are you sure you want to delete this Journal Entry?')) {
-      const updatedEntries = journalEntries.filter((_, i) => i !== index);
-      setJournalEntries(updatedEntries);
+  const handleDelete = async (index) => {
+    if (!window.confirm('Are you sure you want to delete this journal entry?')) return;
+  
+    try {
+      const entryId = journalEntries[index].ID;
+      const response = await fetch(`http://localhost:8081/journal/delete-journal/${entryId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      if (!response.ok) throw new Error('Failed to delete entry');
+      
+      console.log("Journal entry deleted successfully")
+      setJournalEntries(journalEntries.filter((_, i) => i !== index));
+    } catch (error) {
+      console.error('Error deleting journal entry:', error);
     }
   };
+  
 
   const handleCancel = () => {
     setTitle('');
@@ -60,19 +131,14 @@ function Journaling() {
     setIsCreating(false);
   };
 
-  // Toggle expand/collapse for the entry contents
   const toggleExpand = (index) => {
-    setExpandedEntries((prev) => ({
-      ...prev,
-      [index]: !prev[index],
-    }));
+    setExpandedEntries((prev) => ({ ...prev, [index]: !prev[index] }));
   };
 
   return (
     <div className="journaling-container">
       <h1>Journaling</h1>
 
-      {/* Only show list if not creating/editing */}
       {editingIndex === null && !isCreating && (
         <>
           {journalEntries.length === 0 ? (
@@ -87,47 +153,28 @@ function Journaling() {
             <div className="journal-records">
               <h2>Your Journal Entries</h2>
               {journalEntries.map((entryItem, index) => (
-                <div key={index} className="journal-record">
-                  {/* Header row: Title on the left, date + buttons on the right */}
+                <div key={entryItem.ID} className="journal-record">
                   <div className="journal-header" onClick={() => toggleExpand(index)}>
-                    <h3 className="journal-title">
-                      {entryItem.title || 'Untitled Entry'}
-                    </h3>
-
-                    {/* Right side: date and action buttons */}
+                    <h3 className="journal-title">{entryItem.TITLE || 'Untitled Entry'}</h3>
                     <div className="journal-header-right">
-                      <p className="journal-date">{entryItem.date}</p>
-
-                      {/* Stop propagation so clicking icons doesn't toggle expand */}
-                      <div
-                        className="journal-actions"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <button
-                          onClick={() => handleEdit(index)}
-                          className="edit-button"
-                        >
+                      <p className="journal-date">Created on: <br></br> {new Date(entryItem.WRITE_DATE).toLocaleDateString()}</p>
+                      <div className="journal-actions" onClick={(e) => e.stopPropagation()}>
+                        <button onClick={() => handleEdit(index)} className="edit-button">
                           <FaPen />
                         </button>
-                        <button
-                          onClick={() => handleDelete(index)}
-                          className="delete-button"
-                        >
+                        <button onClick={() => handleDelete(index)} className="delete-button">
                           <FaTrashAlt />
                         </button>
                       </div>
                     </div>
                   </div>
-
-                  {/* Expanded details */}
                   {expandedEntries[index] && (
                     <div className="journal-details">
-                      <p className="journal-text">{entryItem.entry}</p>
+                      <p className="journal-text">{entryItem.CONTENT}</p>
                     </div>
                   )}
                 </div>
               ))}
-              {/* "+" icon to add a new entry */}
               <button onClick={handleCreateNewEntryClick} className="add-entry-button">
                 <FaPlus />
               </button>
@@ -136,15 +183,9 @@ function Journaling() {
         </>
       )}
 
-      {/* Create or edit form */}
       {isCreating && (
-        <form
-          onSubmit={handleSubmit}
-          className={editingIndex !== null ? 'edit-entry-form' : 'create-entry-form'}
-        >
-          <label htmlFor="title">
-            {editingIndex !== null ? 'Edit Title (Optional):' : 'Title (Optional):'}
-          </label>
+        <form onSubmit={handleSubmit} className={editingIndex !== null ? 'edit-entry-form' : 'create-entry-form'}>
+          <label htmlFor="title">{editingIndex !== null ? 'Edit Title (Optional):' : 'Title (Optional):'}</label>
           <input
             type="text"
             id="title"
@@ -153,9 +194,7 @@ function Journaling() {
             placeholder="Enter a title for your journal entry"
           />
 
-          <label htmlFor="entry">
-            {editingIndex !== null ? 'Edit Journal Entry:' : 'Journal Entry:'}
-          </label>
+          <label htmlFor="entry">{editingIndex !== null ? 'Edit Journal Entry:' : 'Journal Entry:'}</label>
           <textarea
             id="entry"
             value={entry}
@@ -165,10 +204,7 @@ function Journaling() {
           />
 
           <div className="form-buttons">
-            <button
-              type="submit"
-              className={editingIndex !== null ? 'edit-submit-button' : 'submit-button'}
-            >
+            <button type="submit" className={editingIndex !== null ? 'edit-submit-button' : 'submit-button'}>
               {editingIndex !== null ? 'Update Entry' : 'Save Entry'}
             </button>
             {editingIndex !== null && (
