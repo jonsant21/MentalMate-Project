@@ -1,7 +1,7 @@
 /* Chat container */
 .chat-container {
-  width: 80%;
-  max-width: 900px;
+  width: 90%;
+  max-width: 1000px;
   height: 80vh;
   margin: auto;
   border: 1px solid #ccc;
@@ -75,7 +75,8 @@ input[type="text"]:focus {
 
 /* Submit button styles */
 button {
-  width: 100%;
+  width: 800px; 
+  max-width: 100%; 
   padding: 15px;
   background-color: #007bff;
   color: white;
@@ -97,8 +98,24 @@ button:hover {
   flex-direction: column;
   align-items: center;
   width: 100%;
-  max-width: 400px;
+  max-width: 800px;
   margin: auto;
+}
+
+/* Small voice toggle button styling (for text mode) */
+.voice-toggle-btn {
+  padding: 5px 10px;
+  background-color: #ccc;
+  color: black;
+  border: none;
+  border-radius: 15px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.voice-toggle-btn:hover {
+  background-color: #aaa;
 }
 
 .chat-textarea {
