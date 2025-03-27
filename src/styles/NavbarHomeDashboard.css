@@ -31,6 +31,21 @@
   font-weight: bold;
 }
 
+.navbar-home-dashboard button{
+  color: white;
+  text-decoration: none;
+  font-size: 1.1rem; /* Ensure text size is consistent */
+  font-weight: bold;
+  background: none;
+  border: none;
+}
+
+
+
 .navbar-home-dashboard a:hover {
   color: #ffdd57; /* Change color on hover */
+}
+
+.navbar-home-dashboard button:hover {
+  color: #ffdd57;
 }
