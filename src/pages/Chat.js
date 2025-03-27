@@ -230,12 +230,13 @@ function Chat() {
                   listening ? stopVoiceRecognition() : startVoiceRecognition();
                 }}
                 disabled={loading}
+                className="voice-record-btn"
               >
                 {listening ? "Stop Recording" : "Record Message"}
               </button>
             </div>
             <div style={{ marginBottom: "10px" }}>
-              <button onClick={toggleVoiceMode}>Switch to Text Mode</button>
+              <button onClick={toggleVoiceMode} className="voice-toggle-btn">Switch to Text Mode</button>
             </div>
           </>
         ) : (
@@ -255,7 +256,11 @@ function Chat() {
                 disabled={loading}
               />
               <div className="chat-button-row">
-                <button type="submit" className="send-btn" disabled={loading}>
+                <button
+                  type="submit"
+                  className="send-btn"
+                  disabled={loading}
+                >
                   {loading ? "Sending..." : "Send"}
                 </button>
                 <button

@@ -14,7 +14,7 @@
 }
 
 /* Chat messages container */
-.chat-messages {
+.chat-container .chat-messages {
   flex-grow: 1;
   height: 100%;
   overflow-y: auto;
@@ -26,7 +26,7 @@
 }
 
 /* Chat bubbles */
-.chat-bubble {
+.chat-container .chat-bubble {
   padding: 12px;
   margin: 5px 0;
   border-radius: 12px;
@@ -41,7 +41,7 @@
 }
 
 /* User message bubble */
-.user {
+.chat-container .chat-bubble.user {
   background-color: #007bff;
   color: white;
   border-radius: 18px 18px 0 18px;
@@ -49,7 +49,7 @@
 }
 
 /* Assistant message bubble */
-.assistant {
+.chat-container .chat-bubble.assistant {
   background-color: #ececec;
   color: black;
   border-radius: 18px 18px 18px 0;
@@ -57,7 +57,7 @@
 }
 
 /* Chat input styles */
-input[type="text"] {
+.chat-container input[type="text"] {
   width: 100%;
   padding: 15px;
   margin-top: 10px;
@@ -69,12 +69,14 @@ input[type="text"] {
   transition: border-color 0.3s ease;
 }
 
-input[type="text"]:focus {
+.chat-container input[type="text"]:focus {
   border-color: #007bff;
 }
 
 /* Submit button styles */
-button {
+.chat-container .chat-button-row .send-btn,
+.chat-container .voice-record-btn {
+  flex: 0 1 75%;
   width: 800px; 
   max-width: 100%; 
   padding: 15px;
@@ -88,12 +90,13 @@ button {
   margin-top: 10px;
 }
 
-button:hover {
+.chat-container .chat-button-row .send-btn:hover,
+.chat-container .voice-record-btn:hover {
   background-color: #0056b3;
 }
 
 /* Chat input form */
-.chat-input {
+.chat-container .chat-input {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -103,22 +106,25 @@ button:hover {
 }
 
 /* Small voice toggle button styling (for text mode) */
-.voice-toggle-btn {
-  padding: 5px 10px;
+.chat-container .voice-toggle-btn {
+  flex: 0 1 25%;
+  padding: 15px;
   background-color: #ccc;
   color: black;
   border: none;
-  border-radius: 15px;
-  font-size: 14px;
+  border-radius: 30px;
+  font-size: 16px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  margin-top: 10px;
+  width: 80%;
 }
 
-.voice-toggle-btn:hover {
+.chat-container .voice-toggle-btn:hover {
   background-color: #aaa;
 }
 
-.chat-textarea {
+.chat-container .chat-textarea {
   width: 100%;
   min-height: 50px;
   max-height: 200px; /* Prevents it from getting too tall */
@@ -133,7 +139,14 @@ button:hover {
   transition: border-color 0.3s ease;
 }
 
-.chat-textarea:focus {
+.chat-container .chat-textarea:focus {
   border-color: #007bff;
 }
 
+.chat-container .chat-button-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 10px;
+  gap: 10px; 
+}

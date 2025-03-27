@@ -31,20 +31,21 @@
 }
 
 .signup-form input,
-.signup-form select, /* Add this for the dropdown */
-.signup-form button {
+.signup-form select {
   padding: 0.8rem;
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 1rem;
-  width: 100%; /* Make input, select, and button take full width */
+  width: 93%; 
 }
 
 .signup-form button {
   background-color: #4a90e2;
+  padding: 0.8rem;
   color: white;
-  border: none;
+  border: 1px;
   cursor: pointer;
+  font-size: 1rem;
   transition: background-color 0.3s ease;
 }
 
