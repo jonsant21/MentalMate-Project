@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/Profile.css'; // Adjust path if needed
+import { useNavigate } from 'react-router-dom';
 
 const MentalMateProfile = () => {
   const [userData, setUserData] = useState({
@@ -10,6 +11,7 @@ const MentalMateProfile = () => {
     email: 'MentalMate@example.com',
     phone: '123-456-7890',
   });
+  const navigate = useNavigate();
 
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(userData);
@@ -79,13 +81,33 @@ const MentalMateProfile = () => {
     setIsEditing(false);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     const confirmDelete = window.confirm(
       'Are you sure you want to delete your account? This action cannot be undone.'
     );
     if (confirmDelete) {
-      console.log('Account deleted');
-      // Optionally, add your delete logic here
+      // Optionally, add your delete logic here:
+      try {
+        const response = await fetch('http://localhost:8081/profile/delete-user', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include' // include cookies if you're using sessions
+        });
+  
+        if (!response.ok) {
+          throw new Error('Failed to update profile');
+        }
+        console.log('Account deleted');
+        //navigate to home page:
+        navigate('/'); 
+        
+        
+      } catch (error) {
+        console.error('Error deleting profile:', error);
+      }
+
     }
   };
 

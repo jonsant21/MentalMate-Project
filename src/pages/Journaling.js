@@ -135,8 +135,14 @@ function Journaling() {
       {!isCreating && editingIndex === null && (
         <>
           {journalEntries.length === 0 ? (
-            <p>You haven't written any journal entries yet.</p>
-          ) : (
+             <div className="no-entries-message">
+               <h2>Your Journal Entries</h2>
+               <p>You have zero journal entries.</p>
+               <button onClick={handleCreateNewEntryClick} className="create-entry-button">
+                 Create New Journal Entry
+               </button>
+             </div>
+           ) : (
             <div className="journal-records">
               <h2>Your Journal Entries</h2>
               {journalEntries.map((entryItem, index) => (

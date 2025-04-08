@@ -1,7 +1,7 @@
 const express = require('express');
 const connection = require('../database/DBconnection');
 const router = express.Router();
-const { check, validationResult } = require('express-validator'); // Optional, for validation
+const { check, validationResult } = require('express-validator'); 
 //mention new package ^
 
 
@@ -42,6 +42,7 @@ router.get('/get-info', (req, res) => {
 //http://localhost:8081/profile/update-info
 //updates the user's current information. Makes sure that the email/phone number is valid first, then checks if its already taken
 //if it passes, user's info is updated, and reflected to the client.
+
   router.put('/update-info', [
     // Validation for email and phone
     check('email').isEmail().withMessage('Please provide a valid email address'),
@@ -99,6 +100,34 @@ router.get('/get-info', (req, res) => {
       res.status(500).json({ message: 'Server error while updating profile' });
     }
   });
+
+
+
+
+  ////http://localhost:8081/profile/delete-user
+  //Deletes user. Also deletes session. 
+  router.delete('/delete-user', (req, res) => {
+
+    if (!req.session.userId) {
+      return res.status(401).json({ message: 'Session expired or not logged in' });
+    }
+
+    let query = 'DELETE FROM USER WHERE ID = ?';
+    connection.query(query, [req.session.userId], (err, results) => {
+      if(err){
+          return res.status(500).json({ message: 'Database error' });
+      }
+      req.session.destroy((err) => {
+        if (err){
+            return res.status(500).send("Could not delete session.");
+        }
+        return res.json({message: "Session/User destroyed"});
+    })
+  });
+
+    
+
+});
   
   
 
