@@ -1,6 +1,8 @@
 const express = require('express');
 const connection = require('../database/DBconnection');
 const router = express.Router();
+const { check, validationResult } = require('express-validator'); // Optional, for validation
+//mention new package ^
 
 
 //Routes/Endpoints:
@@ -13,28 +15,92 @@ router.get('/', (req, res) => {
     });
 
 
-
-
 //http://localhost:8081/profile/get-info
-//A DB connection isn't necessary; info is retrieved and saved in the session when logged in.
 //return session values in a json:
 
 router.get('/get-info', (req, res) => {
     if (!req.session.userId) {
-        return res.status(401).json({ message: 'Session expired or not logged in' });
-      }  
-    
-    else{
-        return res.json({
-            username: req.session.username,
-            email: req.session.email,
-            firstName: req.session.firstName,
-            lastName: req.session.lastName,
-            gender: req.session.gender
-        })
+      return res.status(401).json({ message: 'Session expired or not logged in' });
     }
+  
+    let query = 'SELECT FIRST_NAME, EMAIL, GENDER, DOB, PHONE_NUMBER, USERNAME FROM USER WHERE ID = ?'
+    connection.query(query, [req.session.userId], (err, results) => {
+        if(err){
+            return res.status(500).json({ message: 'Database error' });
+        }
+        console.log("Results of logging into profile", results)
+        return res.json({firstName: results[0].FIRST_NAME,
+                             email: results[0].EMAIL,
+                             gender: results[0].GENDER,
+                             dateOfBirth: results[0].DOB,
+                             phone: results[0].PHONE_NUMBER,
+                             nickName: results[0].USERNAME});
+    });
+  });
+  
 
-});
+
+  router.put('/update-info', [
+    // Validation for email and phone
+    check('email').isEmail().withMessage('Please provide a valid email address'),
+    check('phone').isMobilePhone().withMessage('Please provide a valid phone number'),
+  ], async (req, res) => {
+    // Check if the session exists
+    if (!req.session.userId) {
+      return res.status(401).json({ message: 'Session expired or not logged in' });
+    }
+  
+    const { email, phone, firstName, nickName, gender, dateOfBirth } = req.body;
+  
+    // Validate incoming data
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+  
+    try {
+      // Check if the nickname was changed
+      if (nickName !== req.session.username) {
+        // Ensure the new nickname is not taken by any other user, excluding the current user
+        const [userExists] = await connection.promise().query(
+          'SELECT 1 FROM USER WHERE USERNAME = ? AND ID != ?',
+          [nickName, req.session.userId]
+        );
+  
+        if (userExists.length > 0) {
+          return res.status(400).json({ message: 'Username is already taken' });
+        }
+      }
+  
+      // Check if the phone number was changed and is already in use
+      if (phone !== req.session.phoneNumber) {
+        // Ensure the new phone number is not already in use by any other user, excluding the current user
+        const [phoneExists] = await connection.promise().query(
+          'SELECT 1 FROM USER WHERE PHONE_NUMBER = ? AND ID != ?',
+          [phone, req.session.userId]
+        );
+  
+        if (phoneExists.length > 0) {
+          return res.status(400).json({ message: 'Phone number is already in use' });
+        }
+      }
+  
+      // Update user profile in the database
+      const [result] = await connection.promise().query(
+        `UPDATE USER SET FIRST_NAME = ?, USERNAME = ?, GENDER = ?, DOB = ?, EMAIL = ?, PHONE_NUMBER = ? WHERE ID = ?`,
+        [firstName, nickName, gender, dateOfBirth, email, phone, req.session.userId]
+      );
+  
+      // Send a success response after the update
+      return res.json({ email, phone, firstName, nickName, gender, dateOfBirth });
+    } catch (error) {
+      res.status(500).json({ message: 'Server error while updating profile' });
+    }
+  });
+  
+  
+
+  
 
 
 module.exports = router;
