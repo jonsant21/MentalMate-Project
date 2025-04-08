@@ -1,6 +1,6 @@
 # 🌿 Welcome to MentalMate
 
-![MentalMate Dashboard](./public/MentalMate%Logo%02-26.png)
+![MentalMate Dashboard](./public/MentalMate%20Logo%2002-26.png)
 
 > Your all-in-one mental wellness companion — track moods, journal thoughts, chat with an AI, and more.
 
