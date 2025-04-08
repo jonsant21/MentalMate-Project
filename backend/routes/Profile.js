@@ -39,7 +39,9 @@ router.get('/get-info', (req, res) => {
   });
   
 
-
+//http://localhost:8081/profile/update-info
+//updates the user's current information. Makes sure that the email/phone number is valid first, then checks if its already taken
+//if it passes, user's info is updated, and reflected to the client.
   router.put('/update-info', [
     // Validation for email and phone
     check('email').isEmail().withMessage('Please provide a valid email address'),
