@@ -2,7 +2,6 @@ const express = require('express');
 const connection = require('../database/DBconnection');
 const router = express.Router();
 const { check, validationResult } = require('express-validator'); 
-//mention new package ^
 
 
 //Routes/Endpoints:
@@ -127,6 +126,47 @@ router.get('/get-info', (req, res) => {
 
     
 
+});
+
+router.put('/change-password', (req, res) => {
+  if (!req.session.userId) {
+    return res.status(401).json({ message: 'Session expired or not logged in' });
+  }
+
+  const { currentPassword, newPassword } = req.body;
+
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({ message: 'Both current and new passwords are required.' });
+  }
+
+  // Step 1: Get the user's current password
+  let selectQuery = 'SELECT PASSWORD FROM USER WHERE ID = ?';
+  connection.query(selectQuery, [req.session.userId], (err, results) => {
+    if (err) {
+      return res.status(500).json({ message: 'Database error when fetching user' });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const password = results[0].PASSWORD;
+
+    // Step 2: Compare current password
+    if (password != currentPassword) {
+      return res.status(401).json({ message: 'Current password is incorrect' });
+    }
+
+    // Step 3: Update password in DB
+    let updateQuery = 'UPDATE USER SET PASSWORD = ? WHERE ID = ?';
+    connection.query(updateQuery, [newPassword, req.session.userId], (err, result) => {
+      if (err) {
+        return res.status(500).json({ message: 'Database error when updating password' });
+      }
+
+      return res.json({ message: 'Password updated successfully' });
+    });
+  });
 });
   
   
