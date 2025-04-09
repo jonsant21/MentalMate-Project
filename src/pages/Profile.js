@@ -1,6 +1,8 @@
+// src/components/Profile.js
 import React, { useState, useEffect } from 'react';
 import '../styles/Profile.css'; // Adjust path if needed
 import { useNavigate } from 'react-router-dom';
+import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Import eye icons
 
 const MentalMateProfile = () => {
   const [userData, setUserData] = useState({
@@ -11,103 +13,139 @@ const MentalMateProfile = () => {
     email: 'MentalMate@example.com',
     phone: '123-456-7890',
   });
+  const [isEditing, setIsEditing] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [formData, setFormData] = useState(userData);
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
+  // State for toggling password visibility for each field
+  const [passwordVisibility, setPasswordVisibility] = useState({
+    current: false,
+    new: false,
+    confirm: false,
+  });
   const navigate = useNavigate();
 
-  const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState(userData);
-
   useEffect(() => {
-    const fetchJournalEntries = async () => {
+    const fetchUserInfo = async () => {
       try {
         const response = await fetch('http://localhost:8081/profile/get-info', {
           method: 'GET',
           credentials: 'include',
         });
-        if (!response.ok) throw new Error('Failed to fetch entries');
+        if (!response.ok) throw new Error('Failed to fetch user info');
         const data = await response.json();
 
         // Log the data from the API response
         console.log('Fetched user data:', data);
 
+        // Format the date to YYYY-MM-DD
         const date = new Date(data.dateOfBirth);
         data.dateOfBirth = date.toISOString().split('T')[0];
 
-        setUserData(data);  // Update user data
+        setUserData(data); // Update user data
         if (!isEditing) {
           setFormData(data); // Only update formData if not editing
         }
       } catch (error) {
-        console.error('Error fetching journal entries:', error);
+        console.error('Error fetching user info:', error);
       }
     };
 
-    fetchJournalEntries();
-  }, [isEditing]); // The effect now only runs when `isEditing` is false
+    fetchUserInfo();
+  }, [isEditing]);
 
-  const handleEdit = () => {
-    setFormData(userData);  // Ensure formData gets the current userData
-    setIsEditing(true);
-  };
-
+  // Handle changes in profile fields (name, phone, etc.)
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prevData => ({ ...prevData, [name]: value }));
   };
 
+  // Save updated profile information
   const handleSave = async () => {
     try {
       const response = await fetch('http://localhost:8081/profile/update-info', {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include', // include cookies if you're using sessions
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(formData),
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to update profile');
-      }
-
+      if (!response.ok) throw new Error('Failed to update profile');
       const updatedData = await response.json();
-      setUserData(updatedData); // Update state with data from server
+      setUserData(updatedData);
       setIsEditing(false);
     } catch (error) {
       console.error('Error updating profile:', error);
     }
   };
 
+  // Cancel editing profile info
   const handleCancel = () => {
     setIsEditing(false);
   };
 
+  // Delete account functionality
   const handleDelete = async () => {
     const confirmDelete = window.confirm(
       'Are you sure you want to delete your account? This action cannot be undone.'
     );
     if (confirmDelete) {
-      // Optionally, add your delete logic here:
       try {
         const response = await fetch('http://localhost:8081/profile/delete-user', {
           method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include' // include cookies if you're using sessions
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
         });
-  
-        if (!response.ok) {
-          throw new Error('Failed to update profile');
-        }
+        if (!response.ok) throw new Error('Failed to delete account');
         console.log('Account deleted');
-        //navigate to home page:
-        navigate('/'); 
-        
-        
+        navigate('/');
       } catch (error) {
         console.error('Error deleting profile:', error);
       }
+    }
+  };
 
+  // Handle input changes for the password form
+  const handlePasswordChange = (e) => {
+    const { name, value } = e.target;
+    setPasswordForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  // Toggle password visibility for a given field
+  const togglePasswordVisibility = (field) => {
+    setPasswordVisibility(prev => ({ ...prev, [field]: !prev[field] }));
+  };
+
+  // Save new password after validation
+  const handleSavePassword = async () => {
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      alert("New passwords do not match.");
+      return;
+    }
+    try {
+      const response = await fetch('http://localhost:8081/profile/change-password', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          currentPassword: passwordForm.currentPassword,
+          newPassword: passwordForm.newPassword,
+        }),
+      });
+      if (!response.ok) throw new Error('Failed to change password');
+      alert('Password updated successfully!');
+      setIsChangingPassword(false);
+      setPasswordForm({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+      });
+    } catch (error) {
+      console.error('Error updating password:', error);
+      alert('Error updating password.');
     }
   };
 
@@ -149,13 +187,85 @@ const MentalMateProfile = () => {
               </div>
             </div>
             <div className="button-group">
-              <button className="edit-button" onClick={handleEdit}>
+              <button className="edit-button" onClick={() => setIsEditing(true)}>
                 Edit Information
               </button>
               <button className="delete-button" onClick={handleDelete}>
                 Delete Account
               </button>
+              <button className="edit-button" onClick={() => setIsChangingPassword(true)}>
+                Change Password
+              </button>
             </div>
+
+            {/* Render Change Password form if triggered */}
+            {isChangingPassword && (
+              <>
+                <div className="profile-row">
+                  <div className="profile-field full-width">
+                    <label>Current Password</label>
+                    <div className="password-input-wrapper">
+                      <input
+                        type={passwordVisibility.current ? "text" : "password"}
+                        name="currentPassword"
+                        value={passwordForm.currentPassword}
+                        onChange={handlePasswordChange}
+                      />
+                      <span
+                        className="password-toggle"
+                        onClick={() => togglePasswordVisibility("current")}
+                      >
+                        {passwordVisibility.current ? <FaEyeSlash /> : <FaEye />}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="profile-row">
+                  <div className="profile-field">
+                    <label>New Password</label>
+                    <div className="password-input-wrapper">
+                      <input
+                        type={passwordVisibility.new ? "text" : "password"}
+                        name="newPassword"
+                        value={passwordForm.newPassword}
+                        onChange={handlePasswordChange}
+                      />
+                      <span
+                        className="password-toggle"
+                        onClick={() => togglePasswordVisibility("new")}
+                      >
+                        {passwordVisibility.new ? <FaEyeSlash /> : <FaEye />}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="profile-field">
+                    <label>Confirm New Password</label>
+                    <div className="password-input-wrapper">
+                      <input
+                        type={passwordVisibility.confirm ? "text" : "password"}
+                        name="confirmPassword"
+                        value={passwordForm.confirmPassword}
+                        onChange={handlePasswordChange}
+                      />
+                      <span
+                        className="password-toggle"
+                        onClick={() => togglePasswordVisibility("confirm")}
+                      >
+                        {passwordVisibility.confirm ? <FaEyeSlash /> : <FaEye />}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="button-group">
+                  <button className="edit-button" onClick={handleSavePassword}>
+                    Save Password
+                  </button>
+                  <button className="delete-button" onClick={() => setIsChangingPassword(false)}>
+                    Cancel
+                  </button>
+                </div>
+              </>
+            )}
           </>
         ) : (
           <>
