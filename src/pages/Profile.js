@@ -1,93 +1,113 @@
-// src/pages/Profile.js
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../styles/Profile.css'; // Adjust path if needed
+import { useNavigate } from 'react-router-dom';
 
 const MentalMateProfile = () => {
   const [userData, setUserData] = useState({
-    fullName: 'MentalMate',
+    firstName: 'MentalMate',
     nickName: 'MM',
     gender: 'Male',
-    country: 'United States of America',
-    language: 'English',
-    timeZone: 'PST',
     dateOfBirth: '1990-01-01',
     email: 'MentalMate@example.com',
     phone: '123-456-7890',
   });
+  const navigate = useNavigate();
 
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(userData);
 
-  // Comprehensive list of countries
-  const countryOptions = [
-    "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda",
-    "Argentina", "Armenia", "Australia", "Austria", "Azerbaijan", "Bahamas",
-    "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin",
-    "Bhutan", "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei",
-    "Bulgaria", "Burkina Faso", "Burundi", "Cabo Verde", "Cambodia", "Cameroon",
-    "Canada", "Central African Republic", "Chad", "Chile", "China", "Colombia",
-    "Comoros", "Congo (Congo-Brazzaville)", "Costa Rica", "Croatia", "Cuba", "Cyprus",
-    "Czechia (Czech Republic)", "Democratic Republic of the Congo", "Denmark", "Djibouti",
-    "Dominica", "Dominican Republic", "Ecuador", "Egypt", "El Salvador",
-    "Equatorial Guinea", "Eritrea", "Estonia", "Eswatini (fmr. 'Swaziland')",
-    "Ethiopia", "Fiji", "Finland", "France", "Gabon", "Gambia", "Georgia", "Germany",
-    "Ghana", "Greece", "Grenada", "Guatemala", "Guinea", "Guinea-Bissau", "Guyana",
-    "Haiti", "Holy See", "Honduras", "Hungary", "Iceland", "India", "Indonesia",
-    "Iran", "Iraq", "Ireland", "Israel", "Italy", "Jamaica", "Japan", "Jordan",
-    "Kazakhstan", "Kenya", "Kiribati", "Kuwait", "Kyrgyzstan", "Laos", "Latvia",
-    "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania",
-    "Luxembourg", "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta",
-    "Marshall Islands", "Mauritania", "Mauritius", "Mexico", "Micronesia",
-    "Moldova", "Monaco", "Mongolia", "Montenegro", "Morocco", "Mozambique",
-    "Myanmar (formerly Burma)", "Namibia", "Nauru", "Nepal", "Netherlands",
-    "New Zealand", "Nicaragua", "Niger", "Nigeria", "North Korea", "North Macedonia",
-    "Norway", "Oman", "Pakistan", "Palau", "Palestine State", "Panama",
-    "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland", "Portugal",
-    "Qatar", "Romania", "Russia", "Rwanda", "Saint Kitts and Nevis", "Saint Lucia",
-    "Saint Vincent and the Grenadines", "Samoa", "San Marino", "Sao Tome and Principe",
-    "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore",
-    "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Korea",
-    "South Sudan", "Spain", "Sri Lanka", "Sudan", "Suriname", "Sweden", "Switzerland",
-    "Syria", "Tajikistan", "Tanzania", "Thailand", "Timor-Leste", "Togo", "Tonga",
-    "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", "Tuvalu", "Uganda",
-    "Ukraine", "United Arab Emirates", "United Kingdom", "United States of America",
-    "Uruguay", "Uzbekistan", "Vanuatu", "Venezuela", "Vietnam", "Yemen", "Zambia", "Zimbabwe"
-  ];
+  useEffect(() => {
+    const fetchJournalEntries = async () => {
+      try {
+        const response = await fetch('http://localhost:8081/profile/get-info', {
+          method: 'GET',
+          credentials: 'include',
+        });
+        if (!response.ok) throw new Error('Failed to fetch entries');
+        const data = await response.json();
 
-  const timeZoneOptions = ['PST', 'MST', 'CST', 'EST', 'GMT', 'CET'];
+        // Log the data from the API response
+        console.log('Fetched user data:', data);
 
-  // Enter edit mode
+        const date = new Date(data.dateOfBirth);
+        data.dateOfBirth = date.toISOString().split('T')[0];
+
+        setUserData(data);  // Update user data
+        if (!isEditing) {
+          setFormData(data); // Only update formData if not editing
+        }
+      } catch (error) {
+        console.error('Error fetching journal entries:', error);
+      }
+    };
+
+    fetchJournalEntries();
+  }, [isEditing]); // The effect now only runs when `isEditing` is false
+
   const handleEdit = () => {
-    setFormData(userData);
+    setFormData(userData);  // Ensure formData gets the current userData
     setIsEditing(true);
   };
 
-  // Handle input changes in edit mode
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prevData => ({ ...prevData, [name]: value }));
   };
 
-  // Save changes and exit edit mode
-  const handleSave = () => {
-    setUserData(formData);
-    setIsEditing(false);
+  const handleSave = async () => {
+    try {
+      const response = await fetch('http://localhost:8081/profile/update-info', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // include cookies if you're using sessions
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update profile');
+      }
+
+      const updatedData = await response.json();
+      setUserData(updatedData); // Update state with data from server
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error updating profile:', error);
+    }
   };
 
-  // Cancel editing and revert to view mode
   const handleCancel = () => {
     setIsEditing(false);
   };
 
-  // Delete account
-  const handleDelete = () => {
+  const handleDelete = async () => {
     const confirmDelete = window.confirm(
       'Are you sure you want to delete your account? This action cannot be undone.'
     );
     if (confirmDelete) {
-      console.log('Account deleted');
-      // Optionally, add your delete logic here
+      // Optionally, add your delete logic here:
+      try {
+        const response = await fetch('http://localhost:8081/profile/delete-user', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include' // include cookies if you're using sessions
+        });
+  
+        if (!response.ok) {
+          throw new Error('Failed to update profile');
+        }
+        console.log('Account deleted');
+        //navigate to home page:
+        navigate('/'); 
+        
+        
+      } catch (error) {
+        console.error('Error deleting profile:', error);
+      }
+
     }
   };
 
@@ -100,8 +120,8 @@ const MentalMateProfile = () => {
           <>
             <div className="profile-row">
               <div className="profile-field">
-                <label>Full Name</label>
-                <p>{userData.fullName}</p>
+                <label>First Name</label>
+                <p>{userData.firstName}</p>
               </div>
               <div className="profile-field">
                 <label>Nick Name</label>
@@ -114,32 +134,16 @@ const MentalMateProfile = () => {
                 <p>{userData.gender}</p>
               </div>
               <div className="profile-field">
-                <label>Country</label>
-                <p>{userData.country}</p>
-              </div>
-            </div>
-            <div className="profile-row">
-              <div className="profile-field">
-                <label>Language</label>
-                <p>{userData.language}</p>
-              </div>
-              <div className="profile-field">
-                <label>Time Zone</label>
-                <p>{userData.timeZone}</p>
-              </div>
-            </div>
-            <div className="profile-row">
-              <div className="profile-field">
                 <label>Date of Birth</label>
                 <p>{userData.dateOfBirth}</p>
               </div>
+            </div>
+            <div className="profile-row">
               <div className="profile-field">
                 <label>Phone Number</label>
                 <p>{userData.phone}</p>
               </div>
-            </div>
-            <div className="profile-row">
-              <div className="profile-field full-width">
+              <div className="profile-field">
                 <label>My Email Address</label>
                 <p>{userData.email}</p>
               </div>
@@ -157,11 +161,11 @@ const MentalMateProfile = () => {
           <>
             <div className="profile-row">
               <div className="profile-field">
-                <label>Full Name</label>
+                <label>First Name</label>
                 <input 
                   type="text" 
-                  name="fullName" 
-                  value={formData.fullName} 
+                  name="firstName" 
+                  value={formData.firstName} 
                   onChange={handleChange} 
                 />
               </div>
@@ -189,47 +193,6 @@ const MentalMateProfile = () => {
                 </select>
               </div>
               <div className="profile-field">
-                <label>Country</label>
-                <select 
-                  name="country" 
-                  value={formData.country} 
-                  onChange={handleChange}
-                >
-                  {countryOptions.map((country) => (
-                    <option key={country} value={country}>
-                      {country}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            <div className="profile-row">
-              <div className="profile-field">
-                <label>Language</label>
-                <input 
-                  type="text" 
-                  name="language" 
-                  value={formData.language} 
-                  onChange={handleChange} 
-                />
-              </div>
-              <div className="profile-field">
-                <label>Time Zone</label>
-                <select 
-                  name="timeZone" 
-                  value={formData.timeZone} 
-                  onChange={handleChange}
-                >
-                  {timeZoneOptions.map((tz) => (
-                    <option key={tz} value={tz}>
-                      {tz}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            <div className="profile-row">
-              <div className="profile-field">
                 <label>Date of Birth</label>
                 <input 
                   type="date" 
@@ -238,6 +201,8 @@ const MentalMateProfile = () => {
                   onChange={handleChange} 
                 />
               </div>
+            </div>
+            <div className="profile-row">
               <div className="profile-field">
                 <label>Phone Number</label>
                 <input 
@@ -247,15 +212,15 @@ const MentalMateProfile = () => {
                   onChange={handleChange} 
                 />
               </div>
-            </div>
-            <div className="profile-row">
-              <div className="profile-field full-width">
+              <div className="profile-field">
                 <label>My Email Address</label>
                 <input 
                   type="email" 
                   name="email" 
                   value={formData.email} 
                   onChange={handleChange} 
+                  disabled
+                  style={{ backgroundColor: '#f0f0f0', color: '#777' }} 
                 />
               </div>
             </div>
