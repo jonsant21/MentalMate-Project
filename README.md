@@ -32,7 +32,10 @@ In depth explainantions of each feature can be seen by clicking on each feature.
 
 ## 🛠️ Installation
 
-In order to run MentalMate, you must have node installed. From there you can install all necessary packages needed to ru the application, including React and its dependencies. 
+In order to run MentalMate, you must have node installed. To learn how to install node onto your computer, check out node's official website:
+> https://nodejs.org/en/download
+
+From there you can install all necessary packages needed to run the application, including React and its dependencies. 
 
 ```bash
 # After cloning the repository, cd to the folder
