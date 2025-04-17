@@ -1,5 +1,6 @@
 import React from 'react';
-import '../styles/Footer.css'; // Ensure the Footer.css file exists in the styles folder
+import '../styles/Footer.css';
+import { Link } from 'react-router-dom'; // 👈 use Link instead of <a>
 
 function Footer() {
   return (
@@ -7,13 +8,13 @@ function Footer() {
       <p>© 2024 MentalMate. All rights reserved.</p>
       <ul className="footer-links">
         <li>
-          <a href="/about">About</a>
+          <Link to="/about">About</Link>
         </li>
         <li>
-          <a href="/contact">Contact</a>
+          <Link to="/contact">Contact</Link>
         </li>
         <li>
-          <a href="/privacy-policy">Privacy Policy</a>
+          <Link to="/privacy-policy">Privacy Policy</Link>
         </li>
       </ul>
     </footer>

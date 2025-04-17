@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Importing useNavigate for navigation
-import '../styles/Login.css'; // Import the CSS for styling
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import Navbar from '../components/Navbar'; // ✅ Import public navbar
+import '../styles/Login.css';
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -8,7 +10,8 @@ function Login() {
     password: '',
   });
 
-  const navigate = useNavigate(); // For navigation
+  const navigate = useNavigate();
+  const { login, isLoggedIn } = useAuth(); // ✅ Get login + state
 
   const handleChange = (e) => {
     setFormData({
@@ -21,9 +24,8 @@ function Login() {
     e.preventDefault();
     console.log('Log-In Form Data:', formData);
 
-    try{
+    try {
       const response = await fetch('http://localhost:8081/login', {
-
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -35,8 +37,9 @@ function Login() {
       if (response.ok) {
         const data = await response.json();
         console.log(data.message);
-        navigate('/home-dashboard'); // Navigates to HomeDashboard page
 
+        login(); // ✅ Set login state
+        navigate('/home-dashboard');
       } else {
         const errorData = await response.json();
         console.log(errorData.message);
@@ -47,44 +50,46 @@ function Login() {
   };
 
   const handleCreateAccountClick = () => {
-    navigate('/signup'); // Navigates to the sign-up page from the Create Account button
+    navigate('/signup');
   };
 
-
   return (
-    <div className="login-container">
-      <h1>Log In</h1>
-      <form className="login-form" onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <button type="submit">Log In</button>
-      </form>
+    <>
+      {!isLoggedIn && <Navbar />} {/* ✅ Show Navbar only if not logged in */}
 
-      <p className="create-account-link" onClick={handleCreateAccountClick}>
-        Create Account? 
-      </p>
+      <div className="login-container">
+        <h1>Log In</h1>
+        <form className="login-form" onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <button type="submit">Log In</button>
+        </form>
 
-    </div>
+        <p className="create-account-link" onClick={handleCreateAccountClick}>
+          Create Account?
+        </p>
+      </div>
+    </>
   );
 }
 
