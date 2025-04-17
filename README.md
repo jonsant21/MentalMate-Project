@@ -12,12 +12,13 @@
 
 ## ✨ Features
 
-- 🧠 **AI-powered chatbot** for mental health conversations  
-- 📅 **Mood tracking** with daily reflections  
-- 📓 **Secure journaling** with timestamped entries  
+- 🧠 [**AI-powered chatbot**](#chatbot) for mental for mental health conversations  
+- 📅 [**Mood tracking**](#mood-tracking) with daily reflections  
+- 📓 [**Secure journaling**](#journaling) with timestamped entries  
 - 🌼 **Daily affirmations** for positivity  
 - 📈 **Dashboard** for personal growth insights
-In depth explainantions of each feature can be seen by clicking on the feature.
+
+In depth explainantions of each feature can be seen by clicking on each feature.
 
 ---
 
