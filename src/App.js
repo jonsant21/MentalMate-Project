@@ -1,25 +1,35 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import Navbar from './components/Navbar'; // Import Navbar for general pages
-import NavbarHomeDashboard from './components/NavbarHomeDashboard'; // Import HomeDashboard Navbar
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation
+} from 'react-router-dom';
+import { useAuth } from './context/AuthContext'; // Auth context
+
+// Navbars
+import Navbar from './components/Navbar';
+import NavbarHomeDashboard from './components/NavbarHomeDashboard';
 import Footer from './components/Footer';
-import Home from './pages/Home'; // Home page
-import About from './pages/About'; // About page
-import Chat from './pages/Chat'; // Chat page
-import SignUp from './pages/SignUp'; // SignUp page
-import Login from './pages/Login'; // Login page
-import Contact from './pages/Contact'; // Contact page
-import PrivacyPolicy from './pages/PrivacyPolicy'; // Privacy Policy page
-import Journaling from './pages/Journaling'; // Journaling page
-import HomeDashboard from './pages/HomeDashboard'; // HomeDashboard page
-import MoodTracking from './pages/MoodTracking'; // MoodTracking page
-import Profile from './pages/Profile'; // Profile page (ensure this file exists)
+
+// Pages
+import Home from './pages/Home';
+import About from './pages/About';
+import Chat from './pages/Chat';
+import SignUp from './pages/SignUp';
+import Login from './pages/Login';
+import Contact from './pages/Contact';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import Journaling from './pages/Journaling';
+import HomeDashboard from './pages/HomeDashboard';
+import MoodTracking from './pages/MoodTracking';
+import Profile from './pages/Profile';
 
 function App() {
   return (
     <Router>
       <NavbarConditionalWrapper />
-      
+
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
@@ -31,7 +41,7 @@ function App() {
         <Route path="/journaling" element={<Journaling />} />
         <Route path="/home-dashboard" element={<HomeDashboard />} />
         <Route path="/mood-tracking" element={<MoodTracking />} />
-        <Route path="/profile" element={<Profile />} /> {/* Add your Profile route here */}
+        <Route path="/profile" element={<Profile />} />
       </Routes>
 
       <Footer />
@@ -39,22 +49,18 @@ function App() {
   );
 }
 
-// Wrapper component that uses `useLocation` inside `<Router>`
+// ✅ Chooses the navbar based on login state
 function NavbarConditionalWrapper() {
-  const location = useLocation(); // Get current location
+  const { isLoggedIn } = useAuth();
+  const location = useLocation();
 
-  return (
-    // Conditionally render navbar based on the current route
-    location.pathname === "/home-dashboard" || 
-    location.pathname === "/mood-tracking" || 
-    location.pathname === "/journaling" || 
-    location.pathname === "/chat" || 
-    location.pathname === "/profile" ? (
-      <NavbarHomeDashboard /> // Render NavbarHomeDashboard for HomeDashboard, Chat, Profile, and other relevant pages
-    ) : (
-      <Navbar /> // Render Navbar for general pages like Home, About, SignUp, and Login
-    )
-  );
+  // Optional: hide all navbars on some routes like /login or /signup if desired
+  const hideNavOn = ['/login', '/signup'];
+  const shouldHideNav = hideNavOn.includes(location.pathname);
+
+  if (shouldHideNav) return null;
+
+  return isLoggedIn ? <NavbarHomeDashboard /> : <Navbar />;
 }
 
 export default App;
