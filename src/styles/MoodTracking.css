@@ -9,19 +9,63 @@
   font-family: 'Arial', sans-serif;
 }
 
-.calendar-container {
-  margin-top: 30px;
+.mood-tracking-form {
+  margin-bottom: 20px;
 }
 
-.calendar-title {
-  font-size: 1.8rem;
+.mood-tracking-form label {
+  display: block;
+  margin: 10px 0;
   font-weight: bold;
-  margin-bottom: 20px;
-  color: #4caf50;
-  letter-spacing: 1px;
+}
+
+.mood-tracking-form select,
+.mood-tracking-form textarea {
+  width: 100%;
+  margin-top: 5px;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.mood-tracking-form button {
+  margin-top: 15px;
+  padding: 10px 20px;
+  border: none;
+  background-color: #4caf50;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.mood-tracking-form button:disabled {
+  background-color: #9e9e9e;
+}
+
+.error-message {
+  color: red;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-top: 15px;
+  text-align: center;
+  background-color: #ffcccc;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid red;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+.calendar-container {
+  margin-top: 30px;
+  width: 100%;          /* fill the inner width of the parent */
+  box-sizing: border-box;
 }
 
 .react-calendar {
+  width: 100%;           /* span 100% of .calendar-container */
+  box-sizing: border-box;/* include padding/border in that width */
+  font-size: 1.2rem;
   background-color: #ffffff;
   border-radius: 15px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
@@ -29,10 +73,13 @@
 }
 
 .react-calendar__tile {
+  position: relative;
+  overflow: hidden;
+  height: 100px;      /* increase tile height */
+  line-height: 100px; /* vertically center date */
+  padding: 0;
   font-size: 1rem;
-  padding: 12px;
   border-radius: 8px;
-  text-align: center;
   background-color: #f0f0f0;
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
@@ -40,7 +87,7 @@
 .react-calendar__tile:hover {
   background-color: #4caf50;
   color: white;
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .react-calendar__tile--active {
@@ -56,126 +103,17 @@
 }
 
 .mood-tile {
-  font-size: 0.9rem;
-  color: #4f4f4f;
-  background-color: #f1f1f1;
-  padding: 6px;
-  border-radius: 5px;
-  display: inline-block;
-  margin: 2px;
-  font-weight: normal;
+  position: absolute;
+  bottom: 6px;            /* keep it just above the bottom */
+  left: 50%;              /* start at the middle of the tile */
+  transform: translateX(-50%);  /* shift back by half its width */
+  padding: 6px 10px;
+  font-size: 1rem;
+  color: #fff;
+  border-radius: 4px;
+  text-align: center;
   text-transform: capitalize;
-}
-
-.mood-tile.happy {
-  background-color: #ffeb3b;
-  color: #fff;
-}
-
-.mood-tile.sad {
-  background-color: #2196f3;
-  color: #fff;
-}
-
-.mood-tile.angry {
-  background-color: #f44336;
-  color: #fff;
-}
-
-.mood-tile.neutral {
-  background-color: #9e9e9e;
-  color: #fff;
-}
-
-.mood-tile.stressed {
-  background-color: #f57c00;
-  color: #fff;
-}
-
-.mood-tile.excited {
-  background-color: #8bc34a;
-  color: #fff;
-}
-
-.mood-tile.anxious {
-  background-color: #ff9800;
-  color: #fff;
-}
-
-.mood-tile.relaxed {
-  background-color: #8e24aa;
-  color: #fff;
-}
-
-.mood-tile.bored {
-  background-color: #757575;
-  color: #fff;
-}
-
-.mood-tile.motivated {
-  background-color: #4caf50;
-  color: #fff;
-}
-
-.mood-tile.hopeful {
-  background-color: #00bcd4;
-  color: #fff;
-}
-
-.mood-tile.grateful {
-  background-color: #c2185b;
-  color: #fff;
-}
-
-.mood-tile.content {
-  background-color: #4caf50;
-  color: #fff;
-}
-
-.mood-tile.confident {
-  background-color: #9c27b0;
-  color: #fff;
-}
-
-.mood-tile.overwhelmed {
-  background-color: #e91e63;
-  color: #fff;
-}
-
-.mood-tile.disappointed {
-  background-color: #3f51b5;
-  color: #fff;
-}
-
-.mood-tile.frustrated {
-  background-color: #f44336;
-  color: #fff;
-}
-
-.mood-tile.lonely {
-  background-color: #607d8b;
-  color: #fff;
-}
-
-.mood-tile.curious {
-  background-color: #8bc34a;
-  color: #fff;
-}
-
-.react-calendar__navigation {
-  display: none; /* Hide the navigation controls for a cleaner look */
-}
-
-.react-calendar__month-view__days {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: center;
-}
-
-.react-calendar__month-view__days__day {
-  border: 2px solid #f0f0f0;
-  border-radius: 8px;
+  white-space: nowrap;
 }
 
 .react-calendar__month-view__days__day--weekend {
@@ -195,26 +133,9 @@
 .react-calendar__tile--rangeBetween {
   background-color: #bbdefb;
 }
-
-.react-calendar__tile--active {
-  background-color: #4caf50;
-  color: white;
-  font-weight: bold;
+/* force the calendar to stretch the full width of its container */
+.calendar-container .react-calendar {
+  width: 100%     !important;
+  max-width: none !important;
 }
 
-.react-calendar__tile--active:hover {
-  background-color: #388e3c;
-}
-
-.error-message {
-  color: red;                  /* Red text for the error */
-  font-size: 1.2rem;           /* Larger font size */
-  font-weight: bold;           /* Bold text */
-  margin-top: 15px;            /* Add margin to separate it from other elements */
-  text-align: center;          /* Center align the message */
-  background-color: #ffcccc;   /* Light red background for emphasis */
-  padding: 10px;               /* Add some padding around the text */
-  border-radius: 5px;          /* Rounded corners for the error box */
-  border: 1px solid red;      /* Red border around the error message */
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Light shadow for better visibility */
-}
