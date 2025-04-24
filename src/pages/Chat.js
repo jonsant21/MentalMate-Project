@@ -80,11 +80,11 @@ function Chat() {
       const response = await fetch("http://localhost:8081/chatbot", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials:"include",
         body: JSON.stringify({
           message: userInput,
           context: context, // Send the conversation context to the backend
         }),
-
       });
       const data = await response.json();
 

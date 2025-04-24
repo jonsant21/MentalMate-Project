@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { OpenAI } = require("openai");
+const connection = require('../database/DBconnection');
 
 //Initializing connecting to openai:
 
@@ -9,18 +10,35 @@ const openai = new OpenAI({
 });
 
 //Routes/Endpoints:
-
-// http://localhost:8081/chatbot
-
 router.post('/', async (req, res) => {
     let { message, context } = req.body; // Expecting message and optional context array
+    const userId = req.session?.userId; // Retrieve userID for their past memory/conversation
 
     // Initialize system message
     const systemMessage = {
         role: 'system',
-        content: 'You are a mental health chatbot. Offer advice, emotional support, and mindfulness techniques. Be empathetic and encouraging.',
+        content: `You are a compassionate and supportive mental health chatbot designed to offer emotional support, mindfulness techniques, and helpful insights. Be empathetic, non-judgmental, and encouraging at all times.
+        Only provide mindfulness exercises or detailed advice when clearly relevant or requested—avoid offering these unsolicited. Keep all responses as concise as possible without sacrificing warmth or usefulness. Prioritize clarity, empathy, and brevity to ensure a smooth experience for users relying on voice-based output.
+        If a conversation indicates signs of severe distress (e.g. suicidal thoughts or crisis situations), gently recommend contacting real-life mental health resources such as suicide prevention hotlines or local support lines. Only bring up these resources when it is contextually appropriate, never by default.
+        Avoid giving medical or clinical diagnoses. You are not a substitute for professional therapy. Encourage users to seek help from licensed mental health professionals when needed.`,
     };
 
+    // Fetch user memory from database if available
+    let userMemory = '';
+    console.log("Session userId:", userId);
+    if (userId) {
+        try {
+            const [rows] = await connection.promise().query(
+                'SELECT MEMORY FROM USER WHERE ID = ?',
+                [userId]
+            );
+            userMemory = rows[0]?.MEMORY || '';
+        } catch (err) {
+            console.error('Failed to fetch memory:', err);
+        }
+    }
+
+    // Logging context for testing purposes
     console.log('Received context 1:', context);
 
     // Ensure context is an array and limit its size
@@ -30,10 +48,14 @@ router.post('/', async (req, res) => {
     const maxContextMessages = 3; // Keep only the last 3 messages to save tokens
     const shortContext = context.slice(-maxContextMessages);
 
-    console.log('Received context 2:', context);
-
-    // Construct the conversation messages
-    const messages = [systemMessage, ...shortContext, { role: 'user', content: message }];
+    const messages = [systemMessage];
+    if (userMemory) {
+        messages.push({ role: 'system', content: `Summary of past session: ${userMemory}` });
+    }
+    messages.push(...shortContext, { role: 'user', content: message });
+    
+    console.log("Memory retrieved from DB:", userMemory);
+    console.log("Messages sent to OpenAI:", messages);
 
     try {
         const response = await openai.chat.completions.create({
@@ -47,7 +69,40 @@ router.post('/', async (req, res) => {
         // Update context with the latest interaction
         const updatedContext = [...shortContext, { role: 'user', content: message }, { role: 'assistant', content: assistantReply }];
 
-        console.log('Received context 3:', context);
+        // Summarize session for memory
+        let sessionSummary = '';
+        try {
+            const summaryResponse = await openai.chat.completions.create({
+                model: 'gpt-4o-mini',
+                messages: [
+                    { role: 'system', content: 'Summarize this conversation in 2-4 short sentences, focusing on the emotional themes or useful info a future assistant should remember.' },
+                    ...updatedContext
+                ],
+                max_tokens: 1000,
+            });
+            sessionSummary = summaryResponse.choices[0].message.content;
+
+            if (userId) {
+                console.log("Trying to save memory for userId:", userId);
+                console.log("Memory being saved:", sessionSummary);
+
+                await connection.promise().query(
+                    'UPDATE USER SET MEMORY = ? WHERE ID = ?',
+                    [sessionSummary, userId]
+                );
+
+                // Testing purpose only, to see immediately if MEMORY was saved
+                const [verifyRows] = await connection.promise().query(
+                    'SELECT MEMORY FROM USER WHERE ID = ?',
+                    [userId]
+                );
+                console.log("Memory in DB after saving:", verifyRows[0]?.MEMORY);
+            }
+
+
+        } catch (summaryErr) {
+            console.error('Failed to update session memory:', summaryErr);
+        }
 
         // Send the updated context back to the frontend
         return res.json({
@@ -65,17 +120,11 @@ router.post('/', async (req, res) => {
 });
 
 
-//generate-affirmation: used in the homedashboard, generates an affirmation for the front page.
-
-// http://localhost:8081/chatbot/generate-affirmation
-
 router.get('/generate-affirmation', async (req, res) => {
 
     try {
         const response = await openai.chat.completions.create({
-
             model: 'gpt-4o-mini', // the model name
-
             messages: [
                 {
                     role: 'system', // Sets the system message that defines the assistant's behavior
@@ -104,17 +153,13 @@ router.get('/generate-affirmation', async (req, res) => {
 });
 
 
-//generate-tip: used in the homedashboard, generates an mental health tip for the front page.
 
-// http://localhost:8081/chatbot/generate-tip
 
 router.get('/generate-tip', async (req, res) => {
 
     try {
         const response = await openai.chat.completions.create({
-
             model: 'gpt-4o-mini', // the model name
-
             messages: [
                 {
                     role: 'system', // Sets the system message that defines the assistant's behavior
