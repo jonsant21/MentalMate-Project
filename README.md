@@ -67,7 +67,7 @@ npm start
 This project allows for some light configuration of the chatbot model directly in the backend. These settings can be changed in 📁 backend/routes/ChatBot.js
 
 
-🔧 System Prompt
+### 🔧 System Prompt
 
 The `systemMessage` defines how the AI behaves. You can edit the tone, personality, and guidance the model receives:
 
@@ -81,7 +81,7 @@ const systemMessage = {
 
 This is where you can customize the chatbot’s behavior — for example, making it more casual, adding specific instructions, or adjusting how it handles sensitive topics.
 
-🤖 Model Version
+### 🤖 Model Version
 
 You can change which OpenAI model is used by updating this line:
 
@@ -102,7 +102,7 @@ Some other supported model options include:
 
 Refer to OpenAI’s model list for up-to-date options.
 
-🧠 Context Memory Limit
+### 🧠 Context Memory Limit
 To reduce API token usage, you can limit how many past messages are remembered during a chat session:
 
 ```js
