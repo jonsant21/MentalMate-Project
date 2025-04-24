@@ -21,13 +21,24 @@ function MoodTracking() {
     curious: '#8bc34a'
   };
 
-  // Load saved mood history on mount
   useEffect(() => {
-    fetch('http://localhost:8081/mood')
-      .then(res => res.json())
-      .then(setMoodHistory)
-      .catch(console.error);
+    const fetchMoodHistory = async () => {
+      try {
+        const response = await fetch('http://localhost:8081/mood/get-moods', {
+          method: 'GET',
+          credentials: 'include',
+        });
+        if (!response.ok) throw new Error('Failed to fetch mood history');
+        const data = await response.json();
+        setMoodHistory(data);
+      } catch (error) {
+        console.error('Error fetching mood history:', error);
+      }
+    };
+  
+    fetchMoodHistory();
   }, []);
+  
 
   const handleMoodChange = e => setMood(e.target.value);
   const handleNotesChange = e => setNotes(e.target.value);
@@ -35,10 +46,6 @@ function MoodTracking() {
   const handleSubmit = async e => {
     e.preventDefault();
     // Optimistic UI update
-    setMoodHistory({
-      ...moodHistory,
-      [selectedDate.toDateString()]: { mood, notes },
-    });
     try {
       const res = await fetch('http://localhost:8081/mood', {
         method: 'POST',
@@ -47,7 +54,16 @@ function MoodTracking() {
         body: JSON.stringify({ date: selectedDate, mood, notes }),
       });
       const data = await res.json();
+      if (!data.ok){
+        setErrorMessage('Mood already logged today. Come back tomorrow!')
+      }
+      else{
       console.log(data.message);
+      setMoodHistory({
+        ...moodHistory,
+        [selectedDate.toDateString()]: { mood, notes },
+      });
+      }
     } catch (err) {
       console.error(err);
     }
