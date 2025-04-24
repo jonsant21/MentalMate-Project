@@ -45,7 +45,6 @@ function MoodTracking() {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    // Optimistic UI update
     try {
       const res = await fetch('http://localhost:8081/mood', {
         method: 'POST',
@@ -53,21 +52,31 @@ function MoodTracking() {
         credentials: 'include',
         body: JSON.stringify({ date: selectedDate, mood, notes }),
       });
+  
       const data = await res.json();
-      if (!data.ok){
-        setErrorMessage('Mood already logged today. Come back tomorrow!')
-      }
-      else{
-      console.log(data.message);
-      setMoodHistory({
-        ...moodHistory,
-        [selectedDate.toDateString()]: { mood, notes },
-      });
+  
+      if (!res.ok) {
+        if (res.status === 409) {
+          setErrorMessage('Mood already logged today. Come back tomorrow!');
+        } else if (res.status === 401) {
+          setErrorMessage('Session expired. Please log in again.');
+        } else {
+          setErrorMessage('Something went wrong. Please try again.');
+        }
+      } else {
+        console.log(data.message);
+        setMoodHistory({
+          ...moodHistory,
+          [selectedDate.toDateString()]: { mood, notes },
+        });
+        setErrorMessage(null); 
       }
     } catch (err) {
       console.error(err);
+      setErrorMessage('Network error. Please check your connection.');
     }
   };
+  
 
   const handleDateChange = date => {
     setSelectedDate(date);

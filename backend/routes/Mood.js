@@ -35,7 +35,7 @@ router.post('/', (req, res) => {
       }
   
       if (checkResults.length > 0) {
-        return res.status(500).json({ message: 'Mood already logged for today. Come back tomorrow!' });
+        return res.status(409).json({ message: 'Mood already logged for today. Come back tomorrow!' });
       }
   
       // If not logged yet, insert mood
