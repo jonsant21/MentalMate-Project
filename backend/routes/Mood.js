@@ -82,6 +82,48 @@ router.get('/get-moods', (req, res) => {
     });
   });
   
+  router.get('/get-last-mood', (req, res) => {
+    const query = `
+        SELECT MOOD, ADDITIONAL_NOTE, DATE_WRITE
+        FROM MOOD 
+        WHERE USER_ID = ? 
+        ORDER BY DATE_WRITE DESC 
+        LIMIT 1
+    `;
+
+    connection.query(query, [req.session.userId], (err, results) => {
+        if (err) {
+            return res.status(500).json({ message: 'Database error' });
+        }
+
+        console.log(results);
+
+        if (results.length > 0) {
+            const latestEntry = results[0];
+            const entryDate = new Date(latestEntry.DATE_WRITE);
+            const today = new Date();
+
+            // Check if entryDate is the same day as today
+            const isSameDay = entryDate.getFullYear() === today.getFullYear() &&
+                              entryDate.getMonth() === today.getMonth() &&
+                              entryDate.getDate() === today.getDate();
+
+            if (isSameDay) {
+                return res.json({
+                    MOOD: latestEntry.MOOD,
+                    ADDITIONAL_NOTE: latestEntry.ADDITIONAL_NOTE
+                });
+            }
+        }
+
+        // If no entry or the latest entry is NOT from today
+        return res.json({
+            MOOD: "None",
+            ADDITIONAL_NOTE: "No mood entry available for today. Log one now!"
+        });
+    });
+});
+
 
 
 

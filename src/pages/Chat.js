@@ -271,6 +271,7 @@ function Chat() {
                   Voice Mode
                 </button>
               </div>
+              <p style={{fontSize: '14px'}}>AI responses are for informational purposes only and are not a substitute for professional advice.</p>
             </form>
           </>
         )}

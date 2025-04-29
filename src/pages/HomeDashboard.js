@@ -54,11 +54,39 @@ async function getLastJournal() {
 }
 
 
+async function getLastMood() {
+  try {
+    const response = await fetch("http://localhost:8081/mood/get-last-mood", {
+      method: 'GET',
+      credentials: 'include', // Send cookies/session info
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data || { 
+      MOOD: "Unknown", 
+      ADDITIONAL_NOTE: "Create a new journal!" 
+    };
+  } catch (error) {
+    console.error("Error fetching mood entry:", error);
+    return { 
+      MOOD: "Unknown", 
+      ADDITIONAL_NOTE: "Create a new journal!" 
+    }; // Default fallback object
+  }
+}
+
+
+
 
 function HomeDashboard() {
   const [affirmation, setAffirmation] = useState("Loading...");
   const [mentalHealthTip, setMentalHealthTip] = useState("Loading...");
   const [lastJournal, setJournal] = useState(null);
+  const [lastMood, setMood] = useState(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -66,9 +94,12 @@ function HomeDashboard() {
         const dailyAffirmation = await getRandomAffirmation();
         const dailyTip = await getRandomMentalHealthTip();
         const lastEntry = await getLastJournal();
+        const previousMood = await getLastMood();
         setAffirmation(dailyAffirmation);
         setMentalHealthTip(dailyTip);
         setJournal(lastEntry);
+        setMood(previousMood);
+
       } catch (error) {
         console.error("Error fetching data:", error);
         setAffirmation("Couldn't load affirmation.");
@@ -115,9 +146,8 @@ function HomeDashboard() {
       <section className="recent-mood-entries">
         <h2>📊 Recent Mood Entries</h2>
         <ul>
-          <li>😊 Feeling Happy - Yesterday</li>
-          <li>😔 A Bit Down - 2 days ago</li>
-          <li>😌 Calm & Relaxed - 3 days ago</li>
+          <li>{lastMood?.MOOD || "No mood available."}</li>
+          <li>{lastMood?.ADDITIONAL_NOTE || "No additional notes."}</li>
         </ul>
         
         <Link to="/mood-tracking">
