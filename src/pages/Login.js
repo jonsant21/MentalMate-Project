@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import Navbar from '../components/Navbar'; // ✅ Import public navbar
+import Navbar from '../components/Navbar'; // Import public navbar
 import '../styles/Login.css';
 
 function Login() {
@@ -10,8 +10,10 @@ function Login() {
     password: '',
   });
 
+  const [error, setError] = useState('');
+
   const navigate = useNavigate();
-  const { login, isLoggedIn } = useAuth(); // ✅ Get login + state
+  const { login, isLoggedIn } = useAuth(); // Get login + state
 
   const handleChange = (e) => {
     setFormData({
@@ -37,12 +39,13 @@ function Login() {
       if (response.ok) {
         const data = await response.json();
         console.log(data.message);
-
+        setError('');
         login(); // ✅ Set login state
         navigate('/home-dashboard');
       } else {
         const errorData = await response.json();
         console.log(errorData.message);
+        setError('Incorrect username or password');
       }
     } catch (error) {
       console.log(error);
@@ -84,6 +87,8 @@ function Login() {
           </div>
           <button type="submit">Log In</button>
         </form>
+
+        {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
 
         <p className="create-account-link" onClick={handleCreateAccountClick}>
           Create Account?
